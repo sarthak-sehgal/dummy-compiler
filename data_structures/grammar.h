@@ -1,0 +1,37 @@
+/*
+  Authors:
+    - Sarthak Sehgal (2017B3A70452P)
+    - Syed Ahsan Abbas (2017B3A70507P)
+*/
+
+#include <stdlib.h>
+
+#include "../lang_specs/entities.h"
+#include "../utils/general.h"
+
+#ifndef GRAMMAR_H
+#define GRAMMAR_H
+
+/*
+  Grammar is a struct having:
+    - start symbol
+    - array of rules
+    - current count of rules
+    - max count of rules (the current capacity of array)
+*/
+struct __GRAMMAR__
+{
+  nonterminal st_symbol;
+  gm_prod_rule *rules;
+  int curr_num;
+  int capacity;
+};
+typedef struct __GRAMMAR__ grammar;
+
+void set_st_symbol(grammar *gm, nonterminal nt);
+
+grammar *generate_grammar();
+
+void add_new_rule(grammar *gm, nonterminal lhs, gm_node *rhs);
+
+#endif

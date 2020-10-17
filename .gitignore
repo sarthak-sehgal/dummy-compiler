@@ -1,0 +1,6 @@
+**/*.o
+**/*.swp
+output
+exe
+debug_exe
+.vscode
