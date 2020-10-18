@@ -19,175 +19,88 @@ void get_t_name(terminal t, char *name)
     strcpy(name, "DECLARE");
     break;
   case 1:
-    strcpy(name, "MODULE");
+    strcpy(name, "ID");
     break;
   case 2:
-    strcpy(name, "ID");
+    strcpy(name, "COLON");
     break;
   case 3:
     strcpy(name, "SEMICOL");
     break;
   case 4:
-    strcpy(name, "DRIVERDEF");
+    strcpy(name, "LIST");
     break;
   case 5:
-    strcpy(name, "DRIVER");
-    break;
-  case 6:
-    strcpy(name, "PROGRAM");
-    break;
-  case 7:
-    strcpy(name, "DRIVERENDDEF");
-    break;
-  case 8:
-    strcpy(name, "DEF");
-    break;
-  case 9:
-    strcpy(name, "ENDDEF");
-    break;
-  case 10:
-    strcpy(name, "TAKES");
-    break;
-  case 11:
-    strcpy(name, "INPUT");
-    break;
-  case 12:
-    strcpy(name, "SQBO");
-    break;
-  case 13:
-    strcpy(name, "SQBC");
-    break;
-  case 14:
-    strcpy(name, "RETURNS");
-    break;
-  case 15:
-    strcpy(name, "COLON");
-    break;
-  case 16:
-    strcpy(name, "COMMA");
-    break;
-  case 17:
-    strcpy(name, "INTEGER");
-    break;
-  case 18:
-    strcpy(name, "REAL");
-    break;
-  case 19:
-    strcpy(name, "BOOLEAN");
-    break;
-  case 20:
-    strcpy(name, "ARRAY");
-    break;
-  case 21:
     strcpy(name, "OF");
     break;
-  case 22:
-    strcpy(name, "RANGEOP");
+  case 6:
+    strcpy(name, "VARIABLES");
     break;
-  case 23:
-    strcpy(name, "START");
+  case 7:
+    strcpy(name, "JAGGED");
     break;
-  case 24:
-    strcpy(name, "END");
+  case 8:
+    strcpy(name, "ARRAY");
     break;
-  case 25:
-    strcpy(name, "BO");
+  case 9:
+    strcpy(name, "INTEGER");
     break;
-  case 26:
-    strcpy(name, "BC");
+  case 10:
+    strcpy(name, "R1");
     break;
-  case 27:
-    strcpy(name, "GET_VALUE");
+  case 11:
+    strcpy(name, "SQ_OPEN");
     break;
-  case 28:
-    strcpy(name, "PRINT");
-    break;
-  case 29:
-    strcpy(name, "TRUE");
-    break;
-  case 30:
-    strcpy(name, "FALSE");
-    break;
-  case 31:
+  case 12:
     strcpy(name, "NUM");
     break;
-  case 32:
-    strcpy(name, "RNUM");
+  case 13:
+    strcpy(name, "SQ_CLOSE");
     break;
-  case 33:
-    strcpy(name, "ASSIGNOP");
+  case 14:
+    strcpy(name, "SIZE");
     break;
-  case 34:
-    strcpy(name, "USE");
+  case 15:
+    strcpy(name, "VALUES");
     break;
-  case 35:
-    strcpy(name, "WITH");
+  case 16:
+    strcpy(name, "CUR_OPEN");
     break;
-  case 36:
-    strcpy(name, "PARAMETERS");
+  case 17:
+    strcpy(name, "CUR_CLOSE");
     break;
-  case 37:
-    strcpy(name, "PLUS");
-    break;
-  case 38:
-    strcpy(name, "MINUS");
-    break;
-  case 39:
-    strcpy(name, "MUL");
-    break;
-  case 40:
-    strcpy(name, "DIV");
-    break;
-  case 41:
-    strcpy(name, "AND");
-    break;
-  case 42:
-    strcpy(name, "OR");
-    break;
-  case 43:
-    strcpy(name, "LT");
-    break;
-  case 44:
-    strcpy(name, "LE");
-    break;
-  case 45:
-    strcpy(name, "GT");
-    break;
-  case 46:
-    strcpy(name, "GE");
-    break;
-  case 47:
-    strcpy(name, "EQ");
-    break;
-  case 48:
-    strcpy(name, "NE");
-    break;
-  case 49:
-    strcpy(name, "SWITCH");
-    break;
-  case 50:
-    strcpy(name, "CASE");
-    break;
-  case 51:
-    strcpy(name, "BREAK");
-    break;
-  case 52:
-    strcpy(name, "DEFAULT");
-    break;
-  case 53:
-    strcpy(name, "FOR");
-    break;
-  case 54:
-    strcpy(name, "IN");
-    break;
-  case 55:
-    strcpy(name, "WHILE");
-    break;
-  case 56:
+  case 18:
     strcpy(name, "EPS");
     break;
-  case 57:
-    strcpy(name, "DOLLAR");
+  case 19:
+    strcpy(name, "REAL");
+    break;
+  case 20:
+    strcpy(name, "BOOLEAN");
+    break;
+  case 21:
+    strcpy(name, "ELIP");
+    break;
+  case 22:
+    strcpy(name, "EQUALS");
+    break;
+  case 23:
+    strcpy(name, "PLUS");
+    break;
+  case 24:
+    strcpy(name, "MINUS");
+    break;
+  case 25:
+    strcpy(name, "MUL");
+    break;
+  case 26:
+    strcpy(name, "DIV");
+    break;
+  case 27:
+    strcpy(name, "OR");
+    break;
+  case 28:
+    strcpy(name, "AND");
     break;
   }
 }
