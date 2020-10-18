@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 
 const data = require("./data.json");
 const dataKey = "terminals";
@@ -18,7 +19,7 @@ for (const key of data[dataKey]) {
   count++;
 }
 
-fs.writeFile(file_name, res, (err) => {
+fs.writeFile(path.resolve(__dirname, file_name), res, (err) => {
   if (err) throw err;
   console.log(`${file_name} saved.`);
 });
