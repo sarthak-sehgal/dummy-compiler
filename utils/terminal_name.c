@@ -11,8 +11,6 @@ void get_t_name(terminal t, char *name)
   /*
     Get the name of terminal from it's enum int value
   */
-
-  // TO DO: edit this list as per terminal order in entities.h
   switch (t)
   {
   case 0:

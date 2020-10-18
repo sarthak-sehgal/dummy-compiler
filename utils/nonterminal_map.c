@@ -8,7 +8,6 @@
 
 hash_map *generate_nt_map(int map_size)
 {
-  // TO DO: change the non terminals here as per the enum list in entities.h
   hash_map *map = init_map(map_size);
   int *temp;
 
