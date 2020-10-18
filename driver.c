@@ -13,6 +13,8 @@
 #include "./utils/terminal_map.h"
 #include "./utils/nonterminal_map.h"
 #include "./data_structures/grammar.h"
+// #include "./data_structures/tokenStream.h"
+// #include "./utils/tokensier.h"
 #include "./utils/grammar_reader.h"
 #include "./utils/print.h"
 #include "./driver.h"
@@ -21,8 +23,10 @@ int main()
 {
   hash_map *tmap, *ntmap;
   grammar *G = init_grammar();
+  // tokenStream *s = init_tokenStream(); // add to makefile
 
   char grammar_file[150] = "./grammar.txt";
+  // char sourcecode_file[150] = "./sourcecode.txt"; 
 
   while (true)
   {
@@ -49,7 +53,7 @@ int main()
     case 1:
       read_grammar(grammar_file, G);
       print_grammar(G);
-
+      // tokeniseSourceCode(sourcecode_file, s);
       break;
     case 2:
       break;
