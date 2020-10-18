@@ -4,15 +4,17 @@
     - Syed Ahsan Abbas (2017B3A70507P)
 */
 
-#include "grammar_parser.h"
+#include "grammar_reader.h"
 
 /*
   Parse grammar from the file.
 */
-grammar *grammar_parser(char *file_name, hash_map *tmap, hash_map *ntmap)
+void read_grammar(char *file_name, grammar *G)
 {
-  grammar *gm = generate_grammar();
-  set_st_symbol(gm, module);
+  hash_map *tmap, *ntmap;
+  tmap = generate_t_map(15);
+  ntmap = generate_nt_map(15);
+  set_st_symbol(G, module);
 
   char *buffer = calloc(300, sizeof(char));
   char *word = calloc(100, sizeof(char));
@@ -95,7 +97,7 @@ grammar *grammar_parser(char *file_name, hash_map *tmap, hash_map *ntmap)
         }
       }
 
-      add_new_rule(gm, lhs, dummy_node->next);
+      add_new_rule(G, lhs, dummy_node->next);
 
       gm_node *node = dummy_node;
       gm_node *temp = node;
@@ -109,5 +111,4 @@ grammar *grammar_parser(char *file_name, hash_map *tmap, hash_map *ntmap)
   }
 
   free(buffer);
-  return gm;
 }

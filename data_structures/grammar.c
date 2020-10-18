@@ -9,51 +9,51 @@
 /*
   Creates a new grammar entity.
 */
-grammar *generate_grammar()
+grammar *init_grammar()
 {
-  grammar *gm = (grammar *)calloc(1, sizeof(grammar));
-  gm->rules = (gm_prod_rule *)calloc(1, sizeof(gm_prod_rule));
-  gm->capacity = 1;
-  gm->curr_num = 0;
+  grammar *G = (grammar *)calloc(1, sizeof(grammar));
+  G->rules = (gm_prod_rule *)calloc(1, sizeof(gm_prod_rule));
+  G->capacity = 1;
+  G->curr_num = 0;
 
-  return gm;
+  return G;
 }
 
 /*
   Increase capacity of rule array when curr_num reaches the max capacity.
 */
-void increase_capacity(grammar *gm)
+void increase_capacity(grammar *G)
 {
-  assert(gm->capacity == gm->curr_num, "rule expansion called on correct condition");
+  assert(G->capacity == G->curr_num, "rule expansion called on correct condition");
 
-  gm->rules = realloc((void *)(gm->rules), 2 * (gm->capacity) * sizeof(gm_prod_rule));
+  G->rules = realloc((void *)(G->rules), 2 * (G->capacity) * sizeof(gm_prod_rule));
 
-  assert((gm->rules) != NULL, "rule space expansion successful");
+  assert((G->rules) != NULL, "rule space expansion successful");
 
-  gm->capacity = gm->capacity * 2;
+  G->capacity = G->capacity * 2;
 }
 
 /*
   Add new rule in the grammar rule array.
 */
-void add_new_rule(grammar *gm, nonterminal lhs, gm_node *rhs)
+void add_new_rule(grammar *G, nonterminal lhs, gm_node *rhs)
 {
-  if (gm->curr_num == gm->capacity)
+  if (G->curr_num == G->capacity)
   {
-    increase_capacity(gm);
+    increase_capacity(G);
   }
 
-  assert(gm->curr_num < gm->capacity, "space sufficient in grammar for new rule");
+  assert(G->curr_num < G->capacity, "space sufficient in grammar for new rule");
 
-  int curr_idx = gm->curr_num;
+  int curr_idx = G->curr_num;
 
-  gm->rules[curr_idx].lhs = lhs;
+  G->rules[curr_idx].lhs = lhs;
 
   if (rhs)
   {
-    gm->rules[curr_idx].rhs = (gm_node *)calloc(1, sizeof(gm_node));
+    G->rules[curr_idx].rhs = (gm_node *)calloc(1, sizeof(gm_node));
   }
-  gm_node *head = gm->rules[curr_idx].rhs;
+  gm_node *head = G->rules[curr_idx].rhs;
 
   while (rhs)
   {
@@ -70,13 +70,13 @@ void add_new_rule(grammar *gm, nonterminal lhs, gm_node *rhs)
     rhs = rhs->next;
   }
 
-  gm->curr_num += 1;
+  G->curr_num += 1;
 }
 
 /*
   Set the start symbol for the grammar.
 */
-void set_st_symbol(grammar *gm, nonterminal nt)
+void set_st_symbol(grammar *G, nonterminal nt)
 {
-  gm->st_symbol = nt;
+  G->st_symbol = nt;
 }

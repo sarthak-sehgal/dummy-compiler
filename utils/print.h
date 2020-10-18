@@ -12,6 +12,6 @@
 #ifndef PRINT_H
 #define PRINT_H
 
-void print_grammar(grammar *gm);
+void print_grammar(grammar *G);
 
 #endif

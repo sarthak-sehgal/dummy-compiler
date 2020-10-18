@@ -8,10 +8,12 @@
 #include <stdbool.h>
 #include "../data_structures/grammar.h"
 #include "../data_structures/hash_map.h"
+#include "terminal_map.h"
+#include "nonterminal_map.h"
 
-#ifndef GRAMMAR_PARSER_H
-#define GRAMMAR_PARSER_H
+#ifndef GRAMMAR_READER_H
+#define GRAMMAR_READER_H
 
-grammar *grammar_parser(char *file_name, hash_map *tmap, hash_map *ntmap);
+void read_grammar(char *file_name, grammar *G);
 
 #endif

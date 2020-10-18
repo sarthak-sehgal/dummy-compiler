@@ -32,15 +32,15 @@ void print_rule(gm_prod_rule *rule)
   free(buffer);
 }
 
-void print_grammar(grammar *gm)
+void print_grammar(grammar *G)
 {
   char *buffer = calloc(100, sizeof(char));
-  get_nt_name(gm->st_symbol, buffer);
+  get_nt_name(G->st_symbol, buffer);
   printf("\n--- GRAMMAR ---\n\n Start symbol: %s", buffer);
-  printf("\n\nRules (%d):\n", gm->curr_num);
-  for (int i = 0; i < gm->curr_num; i++)
+  printf("\n\nRules (%d):\n", G->curr_num);
+  for (int i = 0; i < G->curr_num; i++)
   {
-    print_rule(&(gm->rules[i]));
+    print_rule(&(G->rules[i]));
     printf("\n");
   }
   printf("\n---- END GRAMMAR ---\n");

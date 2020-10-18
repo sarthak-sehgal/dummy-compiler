@@ -28,10 +28,10 @@ struct __GRAMMAR__
 };
 typedef struct __GRAMMAR__ grammar;
 
-void set_st_symbol(grammar *gm, nonterminal nt);
+void set_st_symbol(grammar *G, nonterminal nt);
 
-grammar *generate_grammar();
+grammar *init_grammar();
 
-void add_new_rule(grammar *gm, nonterminal lhs, gm_node *rhs);
+void add_new_rule(grammar *G, nonterminal lhs, gm_node *rhs);
 
 #endif

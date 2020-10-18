@@ -1,8 +1,8 @@
-run : driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_parser.o grammar.o hash_map.o print.o
-	gcc driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_parser.o grammar.o hash_map.o print.o -o output -lm
+run : driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o
+	gcc driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o -o output -lm
 
-debug_exe : driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_parser.o grammar.o hash_map.o print.o
-	gcc driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_parser.o grammar.o hash_map.o print.o -o debug_exe -lm
+debug_exe : driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o
+	gcc driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o -o debug_exe -lm
 
 exe : driver.o general.o
 	gcc driver.o general.o -o exe
@@ -22,8 +22,8 @@ hash_map.o : ./data_structures/hash_map.h ./data_structures/hash_map.c
 nonterminal_map.o : ./utils/nonterminal_map.h ./utils/nonterminal_map.c
 	gcc -c ./utils/nonterminal_map.c
 
-grammar_parser.o : ./utils/grammar_parser.h ./utils/grammar_parser.c
-	gcc -c ./utils/grammar_parser.c
+grammar_reader.o : ./utils/grammar_reader.h ./utils/grammar_reader.c
+	gcc -c ./utils/grammar_reader.c
 
 grammar.o : ./data_structures/grammar.h ./data_structures/grammar.c
 	gcc -c ./data_structures/grammar.c
