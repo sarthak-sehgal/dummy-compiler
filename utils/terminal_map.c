@@ -57,7 +57,7 @@ hash_map *generate_t_map(int map_size)
 
   temp = calloc(1, sizeof(int));
   *temp = 11;
-  insert_into_map(map, "SQ_OPEN", temp);
+  insert_into_map(map, "SQOP", temp);
 
   temp = calloc(1, sizeof(int));
   *temp = 12;
@@ -65,7 +65,7 @@ hash_map *generate_t_map(int map_size)
 
   temp = calloc(1, sizeof(int));
   *temp = 13;
-  insert_into_map(map, "SQ_CLOSE", temp);
+  insert_into_map(map, "SQCL", temp);
 
   temp = calloc(1, sizeof(int));
   *temp = 14;
@@ -77,11 +77,11 @@ hash_map *generate_t_map(int map_size)
 
   temp = calloc(1, sizeof(int));
   *temp = 16;
-  insert_into_map(map, "CUR_OPEN", temp);
+  insert_into_map(map, "CURLOP", temp);
 
   temp = calloc(1, sizeof(int));
   *temp = 17;
-  insert_into_map(map, "CUR_CLOSE", temp);
+  insert_into_map(map, "CURLCL", temp);
 
   temp = calloc(1, sizeof(int));
   *temp = 18;

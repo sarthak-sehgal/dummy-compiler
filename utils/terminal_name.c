@@ -47,13 +47,13 @@ void get_t_name(terminal t, char *name)
     strcpy(name, "R1");
     break;
   case 11:
-    strcpy(name, "SQ_OPEN");
+    strcpy(name, "SQOP");
     break;
   case 12:
     strcpy(name, "NUM");
     break;
   case 13:
-    strcpy(name, "SQ_CLOSE");
+    strcpy(name, "SQCL");
     break;
   case 14:
     strcpy(name, "SIZE");
@@ -62,10 +62,10 @@ void get_t_name(terminal t, char *name)
     strcpy(name, "VALUES");
     break;
   case 16:
-    strcpy(name, "CUR_OPEN");
+    strcpy(name, "CURLOP");
     break;
   case 17:
-    strcpy(name, "CUR_CLOSE");
+    strcpy(name, "CURLCL");
     break;
   case 18:
     strcpy(name, "EPS");

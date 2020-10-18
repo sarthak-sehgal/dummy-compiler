@@ -11,7 +11,7 @@ jagArrDecStmt DECLARE ID COLON JAGGED ARRAY jagArrRange OF INTEGER SEMICOL jagAr
 jagArrDecStmt DECLARE LIST OF VARIABLES multipleIdList COLON JAGGED ARRAY jagArrRange OF INTEGER SEMICOL jagArrInit
 jagArrInit jagArrDimDec jagArrInit
 jagArrInit jagArrDimDec
-jagArrDimDec R1 SQ_OPEN NUM SQ_CLOSE COLON SIZE NUM COLON VALUES CUR_OPEN jagArrValues CUR_CLOSE
+jagArrDimDec R1 SQOP NUM SQCL COLON SIZE NUM COLON VALUES CURLOP jagArrValues CURLCL
 jagArrValues numList SEMICOL jagArrValues
 jagArrValues numList
 numList NUM numList
@@ -25,16 +25,16 @@ primitiveDataType BOOLEAN
 primitiveDataType ARRAY arrayRangeList OF INTEGER
 arrayRangeList arrayRange arrayRangeList
 arrayRangeList arrayRange
-arrayRange SQ_OPEN numOrId ELIP numOrId SQ_CLOSE
+arrayRange SQOP numOrId ELIP numOrId SQCL
 numOrId NUM
 numOrId ID
-jagArrRange SQ_OPEN NUM ELIP NUM SQ_CLOSE SQ_OPEN SQ_CLOSE
-jagArrRange SQ_OPEN NUM ELIP NUM SQ_CLOSE SQ_OPEN SQ_CLOSE SQ_OPEN SQ_CLOSE
+jagArrRange SQOP NUM ELIP NUM SQCL SQOP SQCL
+jagArrRange SQOP NUM ELIP NUM SQCL SQOP SQCL SQOP SQCL
 numOrIdList numOrId numOrIdList
 numOrIdList numOrId
-jagArrElement ID SQ_OPEN numOrId numOrId SQ_CLOSE
-jagArrElement ID SQ_OPEN numOrId numOrId numOrId SQ_CLOSE
-arrayElement ID SQ_OPEN numOrIdList SQ_CLOSE
+jagArrElement ID SQOP numOrId numOrId SQCL
+jagArrElement ID SQOP numOrId numOrId numOrId SQCL
+arrayElement ID SQOP numOrIdList SQCL
 operand INTEGER
 operand assignLhs
 assignLhs ID
