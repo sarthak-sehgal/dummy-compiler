@@ -17,7 +17,7 @@ jagArrValues numList
 numList NUM numList
 numList EPS
 multipleIdList ID idList
-multipleIDList ID COMMA idList
+multipleIdList ID COMMA idList
 idList ID idList
 idList ID
 primitiveDataType INTEGER
@@ -41,7 +41,7 @@ operand assignLhs
 assignLhs ID
 assignLhs arrayElement
 assignLhs jagArrElement
-assignStmt assignLhs EQUALS arithExpression
+assignStmt assignLhs EQUALS arithExpression SEMICOL
 assignStmt ID EQUALS boolExpression
 arithExpression term PLUS arithExpression
 arithExpression term MINUS arithExpression
