@@ -37,12 +37,14 @@ jagArrElement ID SQOP numOrId numOrId SQCL
 jagArrElement ID SQOP numOrId numOrId numOrId SQCL
 arrayElement ID SQOP numOrIdList SQCL
 operand INTEGER
-operand assignLhs
+operand ID
+operand arrayElement
+operand jagArrElement
 assignLhs ID
 assignLhs arrayElement
 assignLhs jagArrElement
 assignStmt assignLhs EQUALS arithExpression SEMICOL
-assignStmt ID EQUALS boolExpression
+assignStmt ID EQUALS boolExpression SEMICOL
 arithExpression term PLUS arithExpression
 arithExpression term MINUS arithExpression
 arithExpression term
