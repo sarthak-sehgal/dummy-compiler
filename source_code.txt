@@ -6,7 +6,7 @@ declare list of variables a1 a2 : integer ;
 
 
 declare list of variables b1 b2 b3 : boolean ; declare list of variables c1 c2 : real ;
-declare list of variables u v : array [2 .. 5 ] [3 .. 6 ] of integer ;
+declare list of variables u v : array [ 2 .. 5 ] [ 3 .. 6 ] of integer ;
 declare list of variables s1 s2 s3 : jagged array [ 4 .. 7 ] [ ] [ ] of integer ;
 
 
@@ -25,7 +25,7 @@ declare list of variables p1 p2 p3 : jagged array [ 105 .. 107 ] [ ] of integer 
 R1 [ 105 ] : size 4 : values { 20 21 33 ; 102 ; 35 ; 54 }
 
 
-R1 [ 106 ] : size 3 : values { 165 ; 809 ; 929 }
+R1 [ 106 ] : size 3 : values { 165 ; ; 929 }
 R1 [ 107 ] : size 2 : values { 22 ; 745 }  
 
 declare list of variables q1 q2 q3 : jagged array [ 4 .. 7 ] [ ] [ ] of integer ;
