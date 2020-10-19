@@ -12,6 +12,7 @@
 #define NUM_NT 27
 #define NUM_T 33
 #define MAX_SYMBOL_LEN 25
+#define MAX_RULE_LEN 15
 
 /*
   List of terminal symbols in the grammar
@@ -134,5 +135,20 @@ struct __TOKEN_STREAM_NODE__
   token_node *next;
   token_node *prev;
 };
+
+/**/
+typedef struct __PARSE_TREE_NODE__ parse_tree_node;
+struct __PARSE_TREE_NODE__
+{
+  int num_children;
+  bool is_terminal;
+  int g_rule_idx;
+  union
+  {
+    terminal t;
+    nonterminal nt;
+  };
+  parse_tree_node *children[MAX_RULE_LEN];
+}
 
 #endif
