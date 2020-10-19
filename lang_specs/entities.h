@@ -10,7 +10,7 @@
 #define ENTITIES_H
 
 #define NUM_NT 27
-#define NUM_T 29
+#define NUM_T 33
 #define MAX_SYMBOL_LEN 25
 
 /*
@@ -46,7 +46,11 @@ enum __TERMINAL__
   MUL,
   DIV,
   OR,
-  AND
+  AND,
+  PROGRAM,
+  BROP,
+  BRCL,
+  COMMA
 };
 typedef enum __TERMINAL__ terminal;
 

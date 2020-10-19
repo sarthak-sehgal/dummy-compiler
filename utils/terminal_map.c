@@ -127,6 +127,22 @@ hash_map *generate_t_map(int map_size)
   *temp = 28;
   insert_into_map(map, "AND", temp);
 
+  temp = calloc(1, sizeof(int));
+  *temp = 29;
+  insert_into_map(map, "PROGRAM", temp);
+
+  temp = calloc(1, sizeof(int));
+  *temp = 30;
+  insert_into_map(map, "BROP", temp);
+
+  temp = calloc(1, sizeof(int));
+  *temp = 31;
+  insert_into_map(map, "BRCL", temp);
+
+  temp = calloc(1, sizeof(int));
+  *temp = 32;
+  insert_into_map(map, "COMMA", temp);
+
   temp = NULL;
   return map;
 }

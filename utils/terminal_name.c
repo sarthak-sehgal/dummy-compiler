@@ -100,5 +100,17 @@ void get_t_name(terminal t, char *name)
   case 28:
     strcpy(name, "AND");
     break;
+  case 29:
+    strcpy(name, "PROGRAM");
+    break;
+  case 30:
+    strcpy(name, "BROP");
+    break;
+  case 31:
+    strcpy(name, "BRCL");
+    break;
+  case 32:
+    strcpy(name, "COMMA");
+    break;
   }
 }

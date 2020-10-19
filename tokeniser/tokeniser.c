@@ -28,7 +28,6 @@ void tokenise_source_code(char *file_name, token_stream *ts)
 
   while (fgets(buffer, 300, fptr))
   {
-    // printf("%s\n", buffer);
     line_num++;
 
     if (buffer[0] == '\n' || buffer[0] == '\0')
@@ -37,7 +36,7 @@ void tokenise_source_code(char *file_name, token_stream *ts)
     int anchor = 0;
     for (int i = 0;; i++)
     {
-      if (buffer[i] == ' ' || buffer[i] == '\n')
+      if (buffer[i] == ' ' || buffer[i] == '\n' || buffer[i] == '\t' || buffer[i] == '\r' || buffer[i] == '\0')
       {
         word[anchor] = '\0';
         if (anchor > 0)
@@ -103,6 +102,15 @@ void tokenise_source_code(char *file_name, token_stream *ts)
             case '.':
               token->token_name = ELIP;
               break;
+            case '(':
+              token->token_name = BROP;
+              break;
+            case ')':
+              token->token_name = BRCL;
+              break;
+            case ',':
+              token->token_name = COMMA;
+              break;
             default:
               assert(false, "could not find token for the given source code!");
               break;
@@ -113,7 +121,7 @@ void tokenise_source_code(char *file_name, token_stream *ts)
           free(token);
         }
         anchor = 0;
-        if (buffer[i] == '\n')
+        if (buffer[i] == '\n' || buffer[i] == '\0')
           break;
         continue;
       }

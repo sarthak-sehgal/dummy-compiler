@@ -59,6 +59,10 @@ hash_map *generate_token_map(int map_size)
   *temp = 20;
   insert_into_map(map, "boolean", temp);
 
+  temp = calloc(1, sizeof(int));
+  *temp = 29;
+  insert_into_map(map, "program", temp);
+
   temp = NULL;
   return map;
 }

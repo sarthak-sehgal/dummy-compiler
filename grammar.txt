@@ -1,4 +1,4 @@
-module decStmtGrp assignStmtGrp
+module PROGRAM BROP BRCL CURLOP decStmtGrp assignStmtGrp CURLCL
 decStmtGrp decStmt decStmtGrp
 decStmtGrp decStmt
 assignStmtGrp assignStmt assignStmtGrp
@@ -17,6 +17,7 @@ jagArrValues numList
 numList NUM numList
 numList EPS
 multipleIdList ID idList
+multipleIDList ID COMMA idList
 idList ID idList
 idList ID
 primitiveDataType INTEGER
