@@ -26,16 +26,13 @@ void read_grammar(char *file_name, grammar *G)
   {
 
     if (fscanf(fptr, "%[^\n]\n", buffer) == EOF)
-    {
       break;
-    }
+
     int idx = 0;
     int t = 0;
 
     while (buffer[idx] != ' ')
-    {
       word[t++] = buffer[idx++];
-    }
 
     word[t] = '\0';
 

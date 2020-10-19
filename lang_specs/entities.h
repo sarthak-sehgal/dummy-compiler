@@ -114,4 +114,21 @@ struct __GRAMMAR_PROD_RULE__
 };
 typedef struct __GRAMMAR_PROD_RULE__ gm_prod_rule;
 
+/*
+	Token Stream Node is a struct having:
+    - line number
+    - lexeme (string)
+    - terminal name
+    - next and prev pointer to support doubly linked list
+*/
+typedef struct __TOKEN_STREAM_NODE__ token_node;
+struct __TOKEN_STREAM_NODE__
+{
+  int line_num;
+  char *lexeme;
+  terminal token_name;
+  token_node *next;
+  token_node *prev;
+};
+
 #endif

@@ -47,3 +47,57 @@ void print_grammar(grammar *G)
 
   free(buffer);
 }
+
+void print_token_stream(token_stream *ts)
+{
+  if (!ts->head)
+  {
+    printf("Token stream is empty.\n");
+    return;
+  }
+  else
+  {
+    printf("\n--- Begin Token Stream ---\n");
+    token_node *node = ts->head;
+    char *token_name = (char *)calloc(200, sizeof(char));
+    while (node)
+    {
+      get_t_name(node->token_name, token_name);
+      printf("(%d, %s, %s), ", node->line_num, node->lexeme, token_name);
+      node = node->next;
+    }
+
+    printf("\n--- End Token Stream ---\n");
+    free(token_name);
+  }
+}
+
+void fancy_print_token_stream(token_stream *ts)
+{
+  if (!ts->head)
+  {
+    printf("Token stream is empty!\n");
+    return;
+  }
+  else
+  {
+    printf("\n--- Begin Token Stream ---\n");
+    int prev_line_num = 0;
+    token_node *node = ts->head;
+    char *token_name = (char *)calloc(200, sizeof(char));
+    while (node)
+    {
+      if (node->line_num != prev_line_num)
+      {
+        printf("\n Line %d: ", node->line_num);
+        prev_line_num = node->line_num;
+      }
+      get_t_name(node->token_name, token_name);
+      printf("(%s, %s), ", node->lexeme, token_name);
+      node = node->next;
+    }
+
+    printf("\n--- End Token Stream ---\n");
+    free(token_name);
+  }
+}

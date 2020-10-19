@@ -1,8 +1,5 @@
-run : driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o
-	gcc driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o -o output -lm
-
-debug_exe : driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o
-	gcc driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o -o debug_exe -lm
+run : driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o token_stream.o tokeniser.o token_map.o
+	gcc driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o token_stream.o tokeniser.o token_map.o -o output -lm
 
 exe : driver.o general.o
 	gcc driver.o general.o -o exe
@@ -15,6 +12,9 @@ nonterminal_name.o : ./utils/nonterminal_name.h ./utils/nonterminal_name.c
 
 terminal_map.o : ./utils/terminal_map.h ./utils/terminal_map.c
 	gcc -c ./utils/terminal_map.c
+
+token_map.o : ./utils/token_map.h ./utils/token_map.c
+	gcc -c ./utils/token_map.c
 
 hash_map.o : ./data_structures/hash_map.h ./data_structures/hash_map.c
 	gcc -c ./data_structures/hash_map.c
@@ -36,6 +36,12 @@ general.o : ./utils/general.h ./utils/general.c
 
 print.o : ./utils/print.h ./utils/print.c
 	gcc -c ./utils/print.c
+
+token_stream.o : ./data_structures/token_stream.h ./data_structures/token_stream.c
+	gcc -c ./data_structures/token_stream.c
+
+tokeniser.o : ./tokeniser/tokeniser.h ./tokeniser/tokeniser.c
+	gcc -c ./tokeniser/tokeniser.c
 
 clean :
 	rm *.o
