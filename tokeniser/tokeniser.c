@@ -35,9 +35,9 @@ void tokenise_source_code(char *file_name, token_stream *ts)
       continue;
 
     int anchor = 0;
-    for (int i = 0; buffer[i] != '\n'; i++)
+    for (int i = 0;; i++)
     {
-      if (buffer[i] == ' ')
+      if (buffer[i] == ' ' || buffer[i] == '\n')
       {
         word[anchor] = '\0';
         if (anchor > 0)
@@ -113,6 +113,8 @@ void tokenise_source_code(char *file_name, token_stream *ts)
           free(token);
         }
         anchor = 0;
+        if (buffer[i] == '\n')
+          break;
         continue;
       }
 
