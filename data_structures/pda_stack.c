@@ -40,14 +40,8 @@ void push_to_stack(pda_stack *st, stack_elem *elem)
   if (st == NULL)
     assert(false, "cannot push when stack is not defined!");
 
-  stack_elem *elem_copy = init_stack_elem();
-  elem_copy->is_terminal = elem->is_terminal;
-  elem_copy->nt = elem->nt;
-  elem_copy->t = elem->t;
-  elem_copy->par_node = elem->par_node;
-
-  elem_copy->prev = st->top;
-  st->top = elem_copy;
+  elem->prev = st->top;
+  st->top = elem;
   st->size += 1;
 }
 
