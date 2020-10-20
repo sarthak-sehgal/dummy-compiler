@@ -15,37 +15,37 @@ parse_tree_node *init_pt_node()
   return node;
 }
 
-parse_tree_node *copy_node(parse_tree_node *node)
-{
-  parse_tree_node *copy = init_pt_node();
-  copy->num_children = node->children;
-  for (int i = 0; i < node->num_children; i++)
-  {
-    (copy->children)[i] = (node->children)[i];
-  }
-  copy->is_terminal = node->is_terminal;
-  copy->g_rule_idx = node->g_rule_idx;
-  copy->nt = node->nt;
-  copy->t = node->t;
-
-  return copy;
-}
-
-void *add_child(parse_tree_node *node, parse_tree_node *child)
+void add_pt_child(parse_tree_node *node, parse_tree_node *child)
 {
   assert(node->num_children < MAX_RULE_LEN, "no space to add child!");
 
   int idx = node->num_children;
-  (node->children)[idx] = copy_node(child);
+  (node->children)[idx] = child;
   node->num_children += 1;
 }
 
-void *remove_last_child(parse_tree_node *node)
+void remove_node(parse_tree_node *node)
 {
-  if (node->num_children <= 0)
+  if (node->num_children == 0)
+  {
+    free(node);
     return;
+  }
+  for (int i = 0; i < node->num_children; i++)
+    remove_node((node->children)[i]);
 
-  int idx = node->num_children - 1;
-  free((node->children)[idx]);
-  node->num_children -= 1;
+  node->num_children = 0;
+  free(node);
+  return;
+}
+
+void remove_pt_children(parse_tree_node *node)
+{
+  if (node->num_children == 0)
+    return;
+  for (int i = 0; i < node->num_children; i++)
+    remove_node((node->children)[i]);
+
+  node->num_children = 0;
+  return;
 }

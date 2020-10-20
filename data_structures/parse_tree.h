@@ -14,8 +14,8 @@
 
 parse_tree_node *init_pt_node();
 
-void *add_child(parse_tree_node *node, parse_tree_node *child);
+void add_pt_child(parse_tree_node *node, parse_tree_node *child);
 
-void *remove_last_child(parse_tree_node *node);
+void remove_pt_children(parse_tree_node *node);
 
 #endif
