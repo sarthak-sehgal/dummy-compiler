@@ -150,13 +150,13 @@ void print_parse_tree(parse_tree_node *root)
     printf("Tree is empty!\n");
     return;
   }
-  printf("\n--- Begin Parse Tree ---\n");
+  printf("\n\n--- Begin Parse Tree ---\n\n");
   print_tree_node(root, 0, false);
   for (int i = 0; i < root->num_children; i++)
   {
     print_pt_helper((root->children)[i], 0, false);
   }
-  printf("\n--- End Parse Tree ---\n");
+  printf("\n\n--- End Parse Tree ---\n\n");
 }
 
 void print_parse_tree_symbols(parse_tree_node *root)
