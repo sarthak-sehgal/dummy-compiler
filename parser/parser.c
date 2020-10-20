@@ -7,31 +7,24 @@
 #include "parser.h"
 
 bool helper(parse_tree_node *root, grammar *G, token_node **ts, pda_stack *stack);
-bool is_valid(pda_stack *stack, token_node *ts_pointer, grammar *G, parse_tree_node **root);
+bool parse_tree_helper(pda_stack *stack, token_node *ts_pointer, grammar *G, parse_tree_node **root);
 
-void create_parse_tree(parse_tree_node *pt, grammar *G, token_stream *ts)
+void create_parse_tree(parse_tree_node **pt, grammar *G, token_stream *ts)
 {
-  pt = NULL;
-
-  printf("\n--- Begin Parser ---\n");
+  *pt = NULL;
   pda_stack *stack = init_stack();
   stack_elem *start_symbol = init_stack_elem();
   start_symbol->is_terminal = false;
   start_symbol->nt = module;
   push_to_stack(stack, start_symbol);
-
-  if (is_valid(stack, ts->head, G, &pt))
-  {
-    printf("\nVALID!\n");
-  }
-  else
-  {
-    printf("\nOOOOOF INVALID >.<!\n");
-  }
-
-  printf("\n--- End Parser ---\n");
+  bool is_pt_valid = parse_tree_helper(stack, ts->head, G, pt);
+  if (!is_pt_valid)
+    assert(false, "source code is invalid!");
 }
 
+/*
+  Creates a stack element from a grammar rule node
+*/
 stack_elem *gm_node_to_stack_elem(gm_node *node)
 {
   stack_elem *el = init_stack_elem();
@@ -43,336 +36,120 @@ stack_elem *gm_node_to_stack_elem(gm_node *node)
   return el;
 }
 
-parse_tree_node *gm_node_to_pt_node(gm_node *node)
+/*
+  Creates a parse tree node from a PDA stack element
+*/
+parse_tree_node *stack_elem_to_pt_node(stack_elem *st_el)
 {
   parse_tree_node *pt_node = init_pt_node();
-  pt_node->num_children = 0;
-  pt_node->is_terminal = node->is_terminal;
-  if (pt_node->is_terminal)
-    pt_node->t = (node->gmt).t;
-  else
-    pt_node->nt = (node->gmt).nt;
-
+  if (st_el->is_terminal)
+    pt_node->is_terminal = true;
+  pt_node->t = st_el->t;
+  pt_node->nt = st_el->nt;
   return pt_node;
 }
 
-void print_pt_node(parse_tree_node *node)
+/*
+  * Constructs the parse tree on the fly.
+  * The method returns true when a parse tree can be constructed for the given stack configuration and
+    the given token stream (starting from ts_pointer).
+  * The idea is that whenever a stack element is popped out (terminal or nonterminal), it has to be added
+    to the parse tree as a child. For this, we store the parent of each element in stack.
+  * The case to be handled is when we have added some children of a node on the fly while popping out elements
+    in the PDA but later on it turns out that the rule is invalid. For this, whenever we try a different rule for
+    a nonterminal, we make sure to first remove all its existing children.
+*/
+bool parse_tree_helper(pda_stack *stack, token_node *ts_pointer, grammar *G, parse_tree_node **root)
 {
-  char *buffer = (char *)calloc(100, sizeof(char));
-  if (node->is_terminal)
-  {
-    get_t_name(node->t, buffer);
-  }
-  else
-  {
-    get_nt_name(node->nt, buffer);
-  }
-  printf("%s", buffer);
-}
-
-void print_term(gm_node *term)
-{
-  char *buffer = (char *)calloc(100, sizeof(char));
-  if (term->is_terminal)
-  {
-    get_t_name(term->gmt.t, buffer);
-  }
-  else
-  {
-    get_nt_name(term->gmt.nt, buffer);
-  }
-  printf("%s", buffer);
-}
-
-void print_token1(token_node *node)
-{
-  char *buffer = (char *)calloc(200, sizeof(char));
-  get_t_name(node->token_name, buffer);
-  printf("%s", buffer);
-}
-
-bool helper(parse_tree_node *root, grammar *G, token_node **ts, pda_stack *stack)
-{
-  // print_pt_node(root);
-  // printf("\n");
-  if (stack->size > 0 && stack->top->is_terminal && stack->top->t == EPS)
-    pop_from_stack(stack);
-  if (ts == NULL && stack->size == 0)
-  {
-    printf("Token stream completely read!\n");
-    return true;
-  }
-  if (ts == NULL || stack->size == 0)
-  {
-    // printf("Stack is empty!\n");
-    return false;
-  }
-
-  stack_elem *top = stack->top;
-  if (top->is_terminal)
-  {
-    printf("Terminal found! %s\n", (*ts)->lexeme);
-    if (top->t == (*ts)->token_name)
-    {
-      pop_from_stack(stack);
-      *ts = (*ts)->next;
-      printf("\nReturning true!\n");
-      return true;
-    }
-    printf("\nReturning false!\n");
-    return false;
-  }
-
-  nonterminal top_nt = top->nt;
-  token_node *ts_head = *ts;
-
-  pop_from_stack(stack);
-  for (int i = 0; i < G->curr_num; i++)
-  {
-    gm_prod_rule rule = (G->rules)[i];
-    if (rule.lhs == top_nt)
-    {
-      // push_to_stack(stack, rule.rhs);
-      // add_pt_children(root, rule.rhs);
-      // bool res = true;
-      // for (int i = 0; i < rule.len; i++)
-      // {
-      //   res = res && helper((root->children)[i], G, curr_token, stack);
-      //   if (res) {
-      //     pop_from_stack(stack);
-      //     curr_token = curr_token->next;
-      //   }
-      // }
-      // if (res) {
-      //   ts = curr_token;
-      //   return true;
-      // }
-
-      // curr_token = ts;
-      // remove_pt_children(root, rule->rhs);
-      // pop_from_stack(stack, rule->rhs);
-
-      gm_node *term = rule.rhs;
-      int count = 0;
-      bool res = true;
-      printf("\n On ");
-      print_token1(*ts);
-      printf("\nTrying ");
-      print_rule(&rule);
-      printf("\n");
-      while (term)
-      {
-        push_to_stack(stack, gm_node_to_stack_elem(term));
-        add_pt_child(root, gm_node_to_pt_node(term));
-
-        res = res && helper((root->children)[count], G, ts, stack);
-
-        if (!res)
-        {
-          pop_from_stack(stack);
-          remove_pt_children(root);
-          *ts = ts_head;
-          break;
-        }
-
-        count++;
-        term = term->next;
-      }
-
-      if (res)
-      {
-        root->g_rule_idx = i;
-        root->num_children = count;
-        return true;
-      }
-    }
-  }
-
-  stack_elem *top_copy = init_stack_elem();
-  top_copy->is_terminal = false;
-  top_copy->nt = top_nt;
-  push_to_stack(stack, top_copy);
-  free(top_copy);
-  return false;
-}
-
-// bool helper(parse_tree_node *root, grammar *G, token_node *ts, pda_stack *stack)
-// {
-//   stack_elem *top = stack->top;
-//   if (top == NULL)
-//   {
-//     if (ts == NULL)
-//       return true;
-//     return false;
-//   }
-
-//   if (top->is_terminal && top->t)
-//   {
-//     pop_from_stack(stack);
-//     return helper(root, G, ts->next, stack);
-//   }
-
-//   if (top->is_terminal)
-//   {
-//     printf("Terminal found! %s\n", ts->lexeme);
-//     if (top->t == ts->token_name)
-//     {
-//       pop_from_stack(stack);
-//       return helper(root, G, ts->next, stack);
-//     }
-//     printf("\nReturning false!\n");
-//     return false;
-//   }
-
-//   nonterminal top_nt = top->nt;
-//   pop_from_stack(stack);
-
-//   for (int i = 0; i < G->curr_num; i++)
-//   {
-//     gm_prod_rule rule = (G->rules)[i];
-//     if (rule.lhs != top_nt)
-//       continue;
-
-//     gm_node *forward_it = rule.rhs;
-//     gm_node *backward_it = rule.rhs;
-//     while (backward_it->next)
-//       backward_it = backward_it->next;
-
-//     stack_elem *curr_top = stack->top;
-//     while (forward_it)
-//     {
-//       push_to_stack(stack, gm_node_to_stack_elem(backward_it));
-//       add_pt_child(root, gm_node_to_pt_node(forward_it));
-//       forward_it = forward_it->next;
-//       backward_it = backward_it->prev;
-//     }
-//   }
-// }
-
-void print_stack_elem(stack_elem *el)
-{
-  char *buffer = (char *)calloc(200, sizeof(char));
-  if (el->is_terminal)
-  {
-    get_t_name(el->t, buffer);
-  }
-  else
-  {
-    get_nt_name(el->nt, buffer);
-  }
-  printf("%s", buffer);
-}
-
-bool is_valid(pda_stack *stack, token_node *ts_pointer, grammar *G, parse_tree_node **root)
-{
-  // char c;
-  // scanf("%c", &c);
-  // print_pda_stack(stack);
+  // if stack is empty and token stream is completely read, return true
   if (stack->size == 0 && ts_pointer == NULL)
-  {
-    printf("Token stream read! :D");
     return true;
-  }
-  if (stack->size == 0 || ts_pointer == NULL)
-  {
-    printf("Stack is empty!!\n");
-    return false;
-  }
 
-  // printf("\n\nOn %s, ", ts_pointer->lexeme);
-  // printf("stack->top ");
-  // print_stack_elem(stack->top);
-  // printf(", token_name ");
-  // print_token1(ts_pointer);
-  // printf("\n");
+  // if either stack is empty or stream is completely read, return false
+  // note that we just checked above that they both can't be true at the same time
+  if (stack->size == 0 || ts_pointer == NULL)
+    return false;
 
   stack_elem *st_top = stack->top;
-  if (st_top->is_terminal && st_top->t == EPS)
-  {
-    parse_tree_node *pt_node = init_pt_node();
-    pt_node->num_children = 0;
-    pt_node->t = EPS;
-    pt_node->is_terminal = true;
-    add_pt_child(st_top->par_node, pt_node);
-    pop_from_stack(stack);
-    return is_valid(stack, ts_pointer, G, root);
-  }
-
+  // if the stack's top element is a terminal, check it with the token stream pointer
   if (st_top->is_terminal)
   {
-    if (st_top->t == ts_pointer->token_name)
+    if (st_top->t == EPS || st_top->t == ts_pointer->token_name)
     {
-      parse_tree_node *pt_node = init_pt_node();
-      pt_node->num_children = 0;
-      pt_node->t = ts_pointer->token_name;
-      pt_node->is_terminal = true;
-      add_pt_child(st_top->par_node, pt_node);
-      pop_from_stack(stack);
-      bool res = is_valid(stack, ts_pointer->next, G, root);
-      // if (res)
-      //   printf("Returning true.\n");
-      // else
-      //   printf("Returning false.\n");
+      terminal top_t = st_top->t;
 
-      return res;
+      // connect the terminal with its parent
+      parse_tree_node *pt_node = stack_elem_to_pt_node(st_top);
+      if (st_top->par_node != NULL)
+        add_pt_child(st_top->par_node, pt_node);
+      pop_from_stack(stack);
+
+      // if terminal is epsilon, do not move the token stream pointer
+      if (top_t == EPS)
+        return parse_tree_helper(stack, ts_pointer, G, root);
+      // if terminal matches token stream pointer, move it to the next element and check
+      else
+        return parse_tree_helper(stack, ts_pointer->next, G, root);
     }
-    // printf("Returning false.\n");
     return false;
   }
 
   nonterminal nt = st_top->nt;
-  parse_tree_node *tree_node = init_pt_node();
-  tree_node->is_terminal = false;
-  tree_node->nt = nt;
+  // create node for the element that is being popped
+  parse_tree_node *curr_node = stack_elem_to_pt_node(st_top);
 
+  // add the current node as child of its parent
   parse_tree_node *parent = st_top->par_node;
-
   if (parent != NULL)
-  {
-    add_pt_child(parent, tree_node);
-  }
+    add_pt_child(parent, curr_node);
 
+  // set root element for the tree if it is not set yet
   if ((*root) == NULL)
-    *root = tree_node;
+    *root = curr_node;
 
   pop_from_stack(stack);
 
+  // search for the nonterminal in grammar and try each rule
   for (int i = 0; i < G->curr_num; i++)
   {
     gm_prod_rule curr_rule = (G->rules)[i];
     if (curr_rule.lhs != nt)
       continue;
 
-    remove_pt_children(tree_node);
+    // before trying a new rule, remove the existing children of the current node
+    // children may exist when previously we tried a rule but it did not work
+    remove_pt_children(curr_node);
 
+    // create a copy of the current stack each time
+    // this is because we want to kind of pass the stack "by value"
+    // we need a copy as we are dealing with pointers
     pda_stack *new_stack = copy_stack(stack);
     gm_node *rule_rhs = curr_rule.rhs;
-    int count = 1;
+    int rule_len = 1;
     while (rule_rhs->next)
     {
-      count++;
+      rule_len++;
       rule_rhs = rule_rhs->next;
     }
     while (rule_rhs)
     {
       stack_elem *st_el = gm_node_to_stack_elem(rule_rhs);
-      st_el->par_node = tree_node;
+      st_el->par_node = curr_node;
       push_to_stack(new_stack, st_el);
       rule_rhs = rule_rhs->prev;
     }
-    // printf("Trying ");
-    // print_rule(&curr_rule);
-    if (is_valid(new_stack, ts_pointer, G, root))
+
+    // check if the current rule works
+    if (parse_tree_helper(new_stack, ts_pointer, G, root))
     {
-      // printf("Returning true.\n");
-      tree_node->num_children = count;
-      tree_node->g_rule_idx = i;
+      curr_node->num_children = rule_len;
+      curr_node->g_rule_idx = i;
       return true;
     }
 
+    // deallocate the stack copy created if the rule does not work
     delete_stack(new_stack);
   }
 
-  // printf("Returning false.\n");
   return false;
 }

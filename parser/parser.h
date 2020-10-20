@@ -19,6 +19,6 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-void create_parse_tree(parse_tree_node *pt, grammar *G, token_stream *ts);
+void create_parse_tree(parse_tree_node **pt, grammar *G, token_stream *ts);
 
 #endif

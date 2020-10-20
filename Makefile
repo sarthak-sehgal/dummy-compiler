@@ -1,5 +1,5 @@
-run : driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o token_stream.o tokeniser.o token_map.o
-	gcc driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o token_stream.o tokeniser.o token_map.o -o output -lm
+run : driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o token_stream.o tokeniser.o token_map.o pda_stack.o parse_tree.o parser.o
+	gcc driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o token_stream.o tokeniser.o token_map.o pda_stack.o parse_tree.o parser.o -o output -lm
 
 exe : driver.o general.o
 	gcc driver.o general.o -o exe
@@ -42,6 +42,15 @@ token_stream.o : ./data_structures/token_stream.h ./data_structures/token_stream
 
 tokeniser.o : ./tokeniser/tokeniser.h ./tokeniser/tokeniser.c
 	gcc -c ./tokeniser/tokeniser.c
+
+parser.o : ./parser/parser.h ./parser/parser.c
+	gcc -c ./parser/parser.c
+
+parse_tree.o : ./data_structures/parse_tree.h ./data_structures/parse_tree.c
+	gcc -c ./data_structures/parse_tree.c
+
+pda_stack.o : ./data_structures/pda_stack.h ./data_structures/pda_stack.c
+	gcc -c ./data_structures/pda_stack.c
 
 clean :
 	rm *.o
