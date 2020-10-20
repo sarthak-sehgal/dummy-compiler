@@ -113,14 +113,7 @@ bool parse_tree_helper(pda_stack *stack, token_node *ts_pointer, grammar *G, par
 
   // set root element for the tree if it is not set yet
   if ((*root) == NULL)
-  {
-    printf("setting root element ");
-    if (curr_node->is_terminal)
-      printf("fuck\n");
-    else
-      printf("sort\n");
     *root = curr_node;
-  }
 
   pop_from_stack(stack);
 
