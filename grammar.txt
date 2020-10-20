@@ -16,10 +16,11 @@ jagArrValues numList SEMICOL jagArrValues
 jagArrValues numList
 numList NUM numList
 numList EPS
-multipleIdList ID idList
 multipleIdList ID COMMA idList
+multipleIdList ID idList
 idList ID idList
 idList ID
+idList ID COMMA idList
 primitiveDataType INTEGER
 primitiveDataType REAL
 primitiveDataType BOOLEAN
@@ -36,8 +37,8 @@ numOrIdList numOrId
 jagArrElement ID SQOP numOrId numOrId SQCL
 jagArrElement ID SQOP numOrId numOrId numOrId SQCL
 arrayElement ID SQOP numOrIdList SQCL
-operand INTEGER
 operand ID
+operand NUM
 operand arrayElement
 operand jagArrElement
 assignLhs ID
