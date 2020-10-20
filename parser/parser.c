@@ -43,9 +43,15 @@ parse_tree_node *stack_elem_to_pt_node(stack_elem *st_el)
 {
   parse_tree_node *pt_node = init_pt_node();
   if (st_el->is_terminal)
+  {
+    pt_node->t = st_el->t;
     pt_node->is_terminal = true;
-  pt_node->t = st_el->t;
-  pt_node->nt = st_el->nt;
+  }
+  else
+  {
+    pt_node->is_terminal = false;
+    pt_node->nt = st_el->nt;
+  }
   return pt_node;
 }
 
@@ -105,7 +111,14 @@ bool parse_tree_helper(pda_stack *stack, token_node *ts_pointer, grammar *G, par
 
   // set root element for the tree if it is not set yet
   if ((*root) == NULL)
+  {
+    printf("setting root element ");
+    if (curr_node->is_terminal)
+      printf("fuck\n");
+    else
+      printf("sort\n");
     *root = curr_node;
+  }
 
   pop_from_stack(stack);
 

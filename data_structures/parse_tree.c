@@ -10,8 +10,8 @@ parse_tree_node *init_pt_node()
 {
   parse_tree_node *node = (parse_tree_node *)calloc(1, sizeof(parse_tree_node));
   node->num_children = 0;
-  node->is_terminal = true;
-  node->t = 0;
+  node->is_terminal = false;
+  node->nt = 0;
   return node;
 }
 
