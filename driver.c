@@ -19,15 +19,36 @@
 #include "./utils/print.h"
 #include "./driver.h"
 
+char grammar_file[150] = "./grammar.txt";
+char source_code_file[150] = "./source_code.txt";
+bool grammar_read = false, tokenised = false, pt_created = false;
+grammar *G = NULL;
+token_stream *ts = NULL;
+parse_tree_node *pt_root = NULL;
+
+void initialise()
+{
+  if (!grammar_read)
+  {
+    G = init_grammar();
+    read_grammar(grammar_file, G);
+    grammar_read = true;
+  }
+  if (!tokenised)
+  {
+    ts = init_token_stream();
+    tokenise_source_code(source_code_file, ts);
+    tokenised = true;
+  }
+  if (!pt_created)
+  {
+    create_parse_tree(&pt_root, G, ts);
+    pt_created = true;
+  }
+}
+
 int main()
 {
-  grammar *G = init_grammar();
-  token_stream *ts = init_token_stream();
-  parse_tree_node *pt_root = NULL;
-
-  char grammar_file[150] = "./grammar.txt";
-  char source_code_file[150] = "./source_code.txt";
-
   while (true)
   {
     printf("\n");
@@ -43,6 +64,8 @@ int main()
     scanf("%d", &input);
     printf("\n");
 
+    bool grammar_read = false, tokenised = false, pt_created = false;
+
     switch (input)
     {
     case 0:
@@ -50,19 +73,17 @@ int main()
       return 0;
       break;
 
-    case 1:
-      read_grammar(grammar_file, G);
-      // print_grammar(G);
-      tokenise_source_code(source_code_file, ts);
-      fancy_print_token_stream(ts);
-      create_parse_tree(&pt_root, G, ts);
-      print_parse_tree_symbols(pt_root);
+    case 1: // create parse tree
+      initialise();
+      printf("\nParse tree created!\n");
       break;
-    case 2:
+    case 2: // print type errors
       break;
-    case 3:
+    case 3: // print parse tree
+      initialise();
+      print_parse_tree(pt_root);
       break;
-    case 4:
+    case 4: // print type expression table
       break;
     default:
       printf("Please select a valid option.\n\n");
