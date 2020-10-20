@@ -150,6 +150,8 @@ struct __PARSE_TREE_NODE__
     nonterminal nt;
   };
   parse_tree_node *children[MAX_RULE_LEN];
+  int line_num;
+  char *lexeme;
 };
 
 #endif

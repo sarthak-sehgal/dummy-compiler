@@ -56,7 +56,7 @@ int main()
       tokenise_source_code(source_code_file, ts);
       fancy_print_token_stream(ts);
       create_parse_tree(&pt_root, G, ts);
-      print_parse_tree(pt_root);
+      print_parse_tree_symbols(pt_root);
       break;
     case 2:
       break;

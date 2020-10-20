@@ -102,7 +102,7 @@ void fancy_print_token_stream(token_stream *ts)
   }
 }
 
-void print_token(parse_tree_node *node)
+void print_tree_node(parse_tree_node *node, int depth, bool print_symbol)
 {
   char *buffer = (char *)calloc(100, sizeof(char));
   if (node->is_terminal)
@@ -113,19 +113,33 @@ void print_token(parse_tree_node *node)
   {
     get_nt_name(node->nt, buffer);
   }
-  printf("%s", buffer);
+  if (print_symbol)
+  {
+    printf("%s", buffer);
+    return;
+  }
+  printf("(tok %s, ", buffer);
+  if (node->is_terminal)
+  {
+    printf("T, lex %s, line %d, dep %d)", node->lexeme, node->line_num, depth);
+  }
+  else
+  {
+    // TO DO: PRINT TYPE EXPRESSION!
+    printf("NT, dep %d, gr_idx %d)", depth, node->g_rule_idx);
+  }
 }
 
-void print_pt_helper(parse_tree_node *node, int depth)
+void print_pt_helper(parse_tree_node *node, int depth, bool print_symbol)
 {
   printf("\n");
   for (int i = 0; i < depth; i++)
-    printf("|\t");
-  printf("+---- ");
-  print_token(node);
+    printf("|  ");
+  printf("+-- ");
+  print_tree_node(node, depth, print_symbol);
   for (int i = 0; i < node->num_children; i++)
   {
-    print_pt_helper((node->children)[i], depth + 1);
+    print_pt_helper((node->children)[i], depth + 1, print_symbol);
   }
 }
 
@@ -137,10 +151,26 @@ void print_parse_tree(parse_tree_node *root)
     return;
   }
   printf("\n--- Begin Parse Tree ---\n");
-  print_token(root);
+  print_tree_node(root, 0, false);
   for (int i = 0; i < root->num_children; i++)
   {
-    print_pt_helper((root->children)[i], 0);
+    print_pt_helper((root->children)[i], 0, false);
+  }
+  printf("\n--- End Parse Tree ---\n");
+}
+
+void print_parse_tree_symbols(parse_tree_node *root)
+{
+  if (root == NULL)
+  {
+    printf("Tree is empty!\n");
+    return;
+  }
+  printf("\n--- Begin Parse Tree ---\n");
+  print_tree_node(root, 0, true);
+  for (int i = 0; i < root->num_children; i++)
+  {
+    print_pt_helper((root->children)[i], 0, true);
   }
   printf("\n--- End Parse Tree ---\n");
 }

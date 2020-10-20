@@ -12,6 +12,7 @@ parse_tree_node *init_pt_node()
   node->num_children = 0;
   node->is_terminal = false;
   node->nt = 0;
+  node->line_num = 0;
   return node;
 }
 

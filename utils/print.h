@@ -24,6 +24,8 @@ void fancy_print_token_stream(token_stream *ts);
 
 void print_parse_tree(parse_tree_node *root);
 
+void print_parse_tree_symbols(parse_tree_node *root);
+
 void print_pda_stack(pda_stack *st);
 
 #endif
