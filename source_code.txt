@@ -18,10 +18,11 @@ program ( ) {
   declare list of variables m1 m2 m3 : real ;
   declare list of variables h1 h2 h3 : array [ 12 .. 34 ] [ 11 .. 20 ] [ 18 .. 33 ] of integer ; declare list of variables s4 s5 s6 : jagged array [ 3 .. 8 ] [ ] of integer ;
   R1 [ 3 ] : size 3 : values { 20 ; 35 ; 54 }
-  R1 [ 4 ] : size 6 : values { 65 ; 89 ; 99 ; 11 ; 37 ; 11 } : size 2 : values { 22 ; 745 }
-  R1 [ 5 ] : size 4 : values { 67 ; 91 ; 13 ; 44 }
-  R1 [ 6 ] : size 1 : values { 17 }
-  R1 [ 7 ] : size 5 : values { 31 ; 97 ; 10 ; 9 ; 120 }
+  R1 [ 4 ] : size 6 : values { 65 ; 89 ; 99 ; 11 ; 37 ; 11 } 
+  R1 [ 5 ] : size 2 : values { 22 ; 745 }
+  R1 [ 6 ] : size 4 : values { 67 ; 91 ; 13 ; 44 }
+  R1 [ 7 ] : size 1 : values { 17 }
+  R1 [ 8 ] : size 5 : values { 31 ; 97 ; 10 ; 9 ; 120 }
   declare list of variables p1 p2 p3 : jagged array [ 105 .. 107 ] [ ] of integer ;
   R1 [ 105 ] : size 4 : values { 20 21 33 ; 102 ; 35 ; 54 }
 
