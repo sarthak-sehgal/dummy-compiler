@@ -101,3 +101,67 @@ void fancy_print_token_stream(token_stream *ts)
     free(token_name);
   }
 }
+
+void print_token(parse_tree_node *node)
+{
+  char *buffer = (char *)calloc(100, sizeof(char));
+  if (node->is_terminal)
+  {
+    get_t_name(node->t, buffer);
+  }
+  else
+  {
+    get_nt_name(node->nt, buffer);
+  }
+  printf("%s", buffer);
+}
+
+void print_pt_helper(parse_tree_node *node, int depth)
+{
+  printf("\n");
+  for (int i = 0; i < depth; i++)
+    printf("|\t");
+  printf("+---- ");
+  print_token(node);
+  for (int i = 0; i < node->num_children; i++)
+  {
+    print_pt_helper((node->children)[i], depth + 1);
+  }
+}
+
+void print_parse_tree(parse_tree_node *root)
+{
+  if (root == NULL)
+  {
+    printf("Tree is empty!\n");
+    return;
+  }
+  printf("\n--- Begin Parse Tree ---\n");
+  print_token(root);
+  for (int i = 0; i < root->num_children; i++)
+  {
+    print_pt_helper((root->children)[i], 0);
+  }
+  printf("\n--- End Parse Tree ---\n");
+}
+
+void print_pda_stack(pda_stack *st)
+{
+  printf("\n PDA stack: ");
+  stack_elem *temp = st->top;
+  char *buffer = (char *)calloc(200, sizeof(200));
+  while (temp)
+  {
+    if (temp->is_terminal)
+    {
+      get_t_name(temp->t, buffer);
+    }
+    else
+    {
+      get_nt_name(temp->nt, buffer);
+    }
+    printf("%s, ", buffer);
+    temp = temp->prev;
+  }
+  printf("\n");
+}
