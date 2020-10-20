@@ -54,10 +54,13 @@ void add_new_rule(grammar *G, nonterminal lhs, gm_node *rhs)
     G->rules[curr_idx].rhs = (gm_node *)calloc(1, sizeof(gm_node));
   }
   gm_node *head = G->rules[curr_idx].rhs;
+  gm_node *prev = NULL;
 
   while (rhs)
   {
     head->is_terminal = rhs->is_terminal;
+    if (prev != NULL)
+      head->prev = prev;
     if (rhs->is_terminal)
       head->gmt.t = rhs->gmt.t;
     else if (!rhs->is_terminal)
@@ -66,6 +69,7 @@ void add_new_rule(grammar *G, nonterminal lhs, gm_node *rhs)
       head->next = (gm_node *)calloc(1, sizeof(gm_node));
     else
       head->next = NULL;
+    prev = head;
     head = head->next;
     rhs = rhs->next;
   }

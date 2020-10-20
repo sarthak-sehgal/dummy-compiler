@@ -109,6 +109,7 @@ struct __GRAMMAR_NODE__
   bool is_terminal;
   gm_token gmt;
   gm_node *next;
+  gm_node *prev;
 };
 
 /* Production rule has a non-terminal LHS and head of the RHS Linked List */

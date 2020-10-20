@@ -80,6 +80,7 @@ void read_grammar(char *file_name, grammar *G)
             curr_node->is_terminal = true;
             curr_node->gmt.t = *curr_token;
             curr_node->next = NULL;
+            curr_node->prev = prev_node;
             prev_node->next = curr_node;
             prev_node = curr_node;
           }
@@ -89,6 +90,7 @@ void read_grammar(char *file_name, grammar *G)
           curr_node->is_terminal = false;
           curr_node->gmt.nt = *curr_token;
           curr_node->next = NULL;
+          curr_node->prev = prev_node;
           prev_node->next = curr_node;
           prev_node = curr_node;
         }
