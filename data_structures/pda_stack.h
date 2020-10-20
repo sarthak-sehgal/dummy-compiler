@@ -28,6 +28,7 @@ struct __STACK_ELEM__
     nonterminal nt;
   };
   stack_elem *prev;
+  parse_tree_node *par_node;
 };
 
 /*
@@ -47,5 +48,9 @@ pda_stack *init_stack();
 void push_to_stack(pda_stack *st, stack_elem *elem);
 
 void pop_from_stack(pda_stack *st);
+
+pda_stack *copy_stack(pda_stack *st);
+
+void delete_stack(pda_stack *st);
 
 #endif

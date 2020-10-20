@@ -15,6 +15,7 @@ stack_elem *init_stack_elem()
   elem->is_terminal = true;
   elem->t = EPS;
   elem->prev = NULL;
+  elem->par_node = NULL;
   return elem;
 }
 
@@ -43,6 +44,7 @@ void push_to_stack(pda_stack *st, stack_elem *elem)
   elem_copy->is_terminal = elem->is_terminal;
   elem_copy->nt = elem->nt;
   elem_copy->t = elem->t;
+  elem_copy->par_node = elem->par_node;
 
   elem_copy->prev = st->top;
   st->top = elem_copy;
@@ -64,4 +66,43 @@ void pop_from_stack(pda_stack *st)
   st->top = st->top->prev;
   free(top);
   st->size -= 1;
+}
+
+/*
+  Delete the complete stack
+*/
+void delete_stack(pda_stack *st)
+{
+  while (st->size > 0)
+    pop_from_stack(st);
+  free(st);
+}
+
+/*
+  Returns a copy of the stack
+*/
+pda_stack *copy_stack(pda_stack *st)
+{
+  pda_stack *new_st = init_stack();
+  stack_elem *top = st->top;
+  stack_elem *next = NULL;
+  stack_elem *new_top = NULL;
+
+  while (top)
+  {
+    stack_elem *el = init_stack_elem();
+    if (new_top == NULL)
+      new_top = el;
+    if (next != NULL)
+      next->prev = el;
+    el->is_terminal = top->is_terminal;
+    el->nt = top->nt;
+    el->t = top->t;
+    el->par_node = top->par_node;
+    next = el;
+    top = top->prev;
+  }
+  new_st->size = st->size;
+  new_st->top = new_top;
+  return new_st;
 }
