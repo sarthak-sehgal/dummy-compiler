@@ -7,7 +7,7 @@ program ( ) {
 
 
   declare list of variables b1 b2 , b3 : boolean ; declare list of variables c1 c2 : real ;
-  declare list of variables u v : array [ 2 .. 5 ] [ 3 .. 6 ] of integer ;
+  declare list of variables u v : array [ 2 .. 5 ] [ 3 .. 6 ] [ 4 .. 6 ] [ low .. high ] of integer ;
   declare list of variables s1 s2 s3 : jagged array [ 4 .. 7 ] [ ] [ ] of integer ;
 
 
