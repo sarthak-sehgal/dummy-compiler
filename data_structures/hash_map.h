@@ -48,4 +48,6 @@ void delete_map(hash_map *map);
 
 map_node *get_all_map_nodes(hash_map *map);
 
+void delete_map_node_list(map_node *node);
+
 #endif

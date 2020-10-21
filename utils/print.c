@@ -221,12 +221,40 @@ void print_array_type(array_id_entry *data)
   printf("\t<type=rectangularArray, dimensions=%d, ", data->num_dimensions);
   for (int i = 0; i < data->num_dimensions; i++)
   {
-    // TO DO: resolve lexemes for dynamic arrays
     char *range_beg = ((data->range_start)[i])->lexeme;
     char *range_end = ((data->range_end)[i])->lexeme;
     printf("range_R%d=(%s,%s), ", i + 1, range_beg, range_end);
   }
   printf("basicElementType=integer>\n");
+}
+
+void print_jag_arr_type(jagged_arr_id_entry *data)
+{
+  printf("\t2\t|\tnot_applicable\t|\t");
+  printf("<type=jaggedArray, dimensions=%d, range_R1=(%d,%d), range_R2=( ", data->num_dimensions, data->range_start, data->range_end);
+
+  for (int i = 0; i < data->num_rows; i++)
+  {
+    int *sz = (data->sizes)[i];
+    if (data->num_dimensions == 2)
+    {
+      printf("%d", sz[0]);
+    }
+    else
+    {
+      printf("%d [ ", sz[0]);
+      for (int j = 0; j < sz[0]; j++)
+      {
+        printf("%d", sz[j + 1]);
+        if (j < sz[0] - 1)
+          printf(", ");
+      }
+      printf(" ]");
+    }
+    if (i < data->num_rows - 1)
+      printf(", ");
+  }
+  printf(" ), basicElementType=integer>\n");
 }
 
 void print_type_exp_table(hash_map *type_exp_table)
@@ -249,7 +277,7 @@ void print_type_exp_table(hash_map *type_exp_table)
     }
     else if (data->type == jag_array)
     {
-      // TO DO
+      print_jag_arr_type(data->jag_arr_entry);
     }
     else
     {
@@ -258,6 +286,7 @@ void print_type_exp_table(hash_map *type_exp_table)
     key_root = key_root->next;
     count++;
   }
+  delete_map_node_list(key_root);
   printf("\nTotal number of variables: %d", count);
   printf("\n\n---------- END TYPE EXPRESSION TABLE ----------\n\n");
 }

@@ -14,4 +14,6 @@
 
 void assert(bool condition, char *error_string);
 
+int string_to_num(char *string);
+
 #endif

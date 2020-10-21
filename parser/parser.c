@@ -171,17 +171,18 @@ void set_declaration_types(parse_tree_node *root, hash_map *type_exp_table)
   if (root->is_terminal == false && root->nt == decStmt)
   {
     id_type stmt_type = get_id_type_from_dec_stmt_node(root);
+    parse_tree_node *node = (root->children)[0];
     if (stmt_type == primitive)
     {
-      set_table_entry_for_prim_stmt((root->children)[0], type_exp_table);
+      set_table_entry_for_prim_stmt(node, type_exp_table);
     }
     else if (stmt_type == array)
     {
-      set_table_entry_for_arr_stmt((root->children)[0], type_exp_table);
+      set_table_entry_for_arr_stmt(node, type_exp_table);
     }
     else if (stmt_type == jag_array)
     {
-      // TO DO
+      set_table_entry_for_jag_arr_stmt(node, type_exp_table);
     }
     else
     {

@@ -49,6 +49,16 @@ void initialise()
   }
 }
 
+void init_type_table()
+{
+  if (!type_table_created)
+  {
+    type_table = init_type_exp_table();
+    traverse_parse_tree(pt_root, type_table);
+    type_table_created = true;
+  }
+}
+
 int main()
 {
   while (true)
@@ -66,8 +76,6 @@ int main()
     scanf("%d", &input);
     printf("\n");
 
-    bool grammar_read = false, tokenised = false, pt_created = false;
-
     switch (input)
     {
     case 0:
@@ -81,12 +89,7 @@ int main()
       break;
     case 2: // print type errors
       initialise();
-      if (!type_table_created)
-      {
-        type_table = init_type_exp_table();
-        traverse_parse_tree(pt_root, type_table);
-        type_table_created = true;
-      }
+      init_type_table();
       break;
     case 3: // print parse tree
       initialise();
@@ -94,12 +97,7 @@ int main()
       break;
     case 4: // print type expression table
       initialise();
-      if (!type_table_created)
-      {
-        type_table = init_type_exp_table();
-        traverse_parse_tree(pt_root, type_table);
-        type_table_created = true;
-      }
+      init_type_table();
       print_type_exp_table(type_table);
       break;
     default:
