@@ -161,3 +161,41 @@ bool parse_tree_helper(pda_stack *stack, token_node *ts_pointer, grammar *G, par
 
   return false;
 }
+
+void set_declaration_types(parse_tree_node *root, hash_map *type_exp_table)
+{
+  if (root->is_terminal)
+    return;
+  if (root->is_terminal == false && root->nt == assignStmtGrp)
+    return;
+
+  if (root->is_terminal == false && root->nt == decStmt)
+  {
+    id_type stmt_type = get_id_type_from_dec_stmt_node(root);
+    if (stmt_type == primitive)
+    {
+      set_table_entry_for_prim_stmt((root->children)[0], type_exp_table);
+    }
+    else if (stmt_type == array)
+    {
+      // TO DO
+    }
+    else if (stmt_type == jag_array)
+    {
+      // TO DO
+    }
+    else
+    {
+      assert(false, "[set_declaration_types] invalid statement type");
+    }
+    return;
+  }
+
+  for (int i = 0; i < root->num_children; i++)
+    set_declaration_types((root->children)[i], type_exp_table);
+}
+
+void traverse_parse_tree(parse_tree_node *tree_root, hash_map *type_exp_table)
+{
+  set_declaration_types(tree_root, type_exp_table);
+}

@@ -195,3 +195,50 @@ void print_pda_stack(pda_stack *st)
   }
   printf("\n");
 }
+
+void print_primitive_type(primitive_id_entry *data)
+{
+  printf("\t\tNO\t\t\t|\t\tnot_applicable\t\t|\t\t<type=");
+  if (data->type == integer)
+    printf("integer");
+  else if (data->type == real)
+    printf("real");
+  else if (data->type == boolean)
+    printf("boolean");
+  else
+    assert(false, "[print_primitive_type] unknown primitive type");
+  printf(">\n");
+}
+
+void print_type_exp_table(hash_map *type_exp_table)
+{
+  printf("\n\n---------- BEGIN TYPE EXPRESSION TABLE ----------\n\n");
+  printf("\t\tField 1\t\t\t|\t\tField 2\t\t\t|\t\tField 3\t\t\t|\t\tField 4\n");
+  map_node *key_root = get_all_map_nodes(type_exp_table);
+  int count = 0;
+  while (key_root)
+  {
+    printf("\t\t%s\t\t\t|", key_root->string);
+    type_exp_table_entry *data = key_root->data;
+    if (data->type == primitive)
+    {
+      print_primitive_type(data->prim_entry);
+    }
+    else if (data->type == array)
+    {
+      // TO DO
+    }
+    else if (data->type == jag_array)
+    {
+      // TO DO
+    }
+    else
+    {
+      assert(false, "[print_type_exp_table] unknown data type");
+    }
+    key_root = key_root->next;
+    count++;
+  }
+  printf("\nTotal number of variables: %d", count);
+  printf("\n\n---------- END TYPE EXPRESSION TABLE ----------\n\n");
+}

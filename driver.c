@@ -17,14 +17,16 @@
 #include "./parser/parser.h"
 #include "./utils/grammar_reader.h"
 #include "./utils/print.h"
+#include "./type_exp_table/type_exp_table.h"
 #include "./driver.h"
 
 char grammar_file[150] = "./grammar.txt";
 char source_code_file[150] = "./source_code.txt";
-bool grammar_read = false, tokenised = false, pt_created = false;
+bool grammar_read = false, tokenised = false, pt_created = false, type_table_created = false;
 grammar *G = NULL;
 token_stream *ts = NULL;
 parse_tree_node *pt_root = NULL;
+hash_map *type_table = NULL;
 
 void initialise()
 {
@@ -78,12 +80,27 @@ int main()
       printf("\nParse tree created!\n");
       break;
     case 2: // print type errors
+      initialise();
+      if (!type_table_created)
+      {
+        type_table = init_type_exp_table();
+        traverse_parse_tree(pt_root, type_table);
+        type_table_created = true;
+      }
       break;
     case 3: // print parse tree
       initialise();
       print_parse_tree(pt_root);
       break;
     case 4: // print type expression table
+      initialise();
+      if (!type_table_created)
+      {
+        type_table = init_type_exp_table();
+        traverse_parse_tree(pt_root, type_table);
+        type_table_created = true;
+      }
+      print_type_exp_table(type_table);
       break;
     default:
       printf("Please select a valid option.\n\n");

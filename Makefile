@@ -1,5 +1,5 @@
-run : driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o token_stream.o tokeniser.o token_map.o pda_stack.o parse_tree.o parser.o
-	gcc driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o token_stream.o tokeniser.o token_map.o pda_stack.o parse_tree.o parser.o -o output -lm
+run : driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o token_stream.o tokeniser.o token_map.o pda_stack.o parse_tree.o parser.o type_exp_table.o
+	gcc driver.o general.o terminal_name.o nonterminal_name.o terminal_map.o nonterminal_map.o grammar_reader.o grammar.o hash_map.o print.o token_stream.o tokeniser.o token_map.o pda_stack.o parse_tree.o parser.o type_exp_table.o -o output -lm
 
 exe : driver.o general.o
 	gcc driver.o general.o -o exe
@@ -51,6 +51,9 @@ parse_tree.o : ./data_structures/parse_tree.h ./data_structures/parse_tree.c
 
 pda_stack.o : ./data_structures/pda_stack.h ./data_structures/pda_stack.c
 	gcc -c ./data_structures/pda_stack.c
+
+type_exp_table.o : ./type_exp_table/type_exp_table.h ./type_exp_table/type_exp_table.c
+	gcc -c ./type_exp_table/type_exp_table.c
 
 clean :
 	rm *.o

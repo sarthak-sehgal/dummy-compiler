@@ -9,9 +9,6 @@
 #ifndef ENTITIES_H
 #define ENTITIES_H
 
-#define NUM_NT 28
-#define NUM_T 33
-#define MAX_SYMBOL_LEN 25
 #define MAX_RULE_LEN 15
 
 /*

@@ -10,6 +10,7 @@
 #include "../utils/terminal_name.h"
 #include "../tokeniser/tokeniser.h"
 #include "../data_structures/pda_stack.h"
+#include "../type_exp_table/type_exp_table.h"
 
 #ifndef PRINT_H
 #define PRINT_H
@@ -27,5 +28,7 @@ void print_parse_tree(parse_tree_node *root);
 void print_parse_tree_symbols(parse_tree_node *root);
 
 void print_pda_stack(pda_stack *st);
+
+void print_type_exp_table(hash_map *type_exp_table);
 
 #endif
