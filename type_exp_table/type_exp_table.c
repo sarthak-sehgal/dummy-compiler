@@ -36,26 +36,6 @@ id_type get_id_type_from_dec_stmt_node(parse_tree_node *node)
   return 0;
 }
 
-// void set_table_entries_for_prim_ids(parse_tree_node *node, hash_map *type_exp_table, primitive_id_type prim_type)
-// {
-//   if (node->is_terminal && node->t == ID)
-//   {
-//     primitive_id_entry *prim_entry = (primitive_id_entry *)calloc(1, sizeof(primitive_id_entry));
-//     prim_entry->type = prim_type;
-//     prim_entry->lexeme = node->lexeme;
-
-//     type_exp_table_entry *entry = init_table_entry();
-//     entry->type = primitive;
-//     entry->prim_entry = prim_entry;
-//     insert_into_map(type_exp_table, prim_entry->lexeme, entry);
-
-//     return;
-//   }
-
-//   for (int i = 0; i < node->num_children; i++)
-//     set_table_entries_for_prim_ids((node->children)[i], type_exp_table, prim_type);
-// }
-
 void get_lexeme_list_helper(char ***id_list, parse_tree_node *node, int *curr_stored, int *capacity)
 {
   if (node->is_terminal && node->t == ID)
@@ -67,27 +47,24 @@ void get_lexeme_list_helper(char ***id_list, parse_tree_node *node, int *curr_st
       *id_list = (char **)realloc(*id_list, sizeof(char *) * (*capacity));
     }
 
-    (*id_list)[(*curr_stored)] = node->lexeme;
+    (*id_list)[(*curr_stored)] = node->token->lexeme;
     *curr_stored += 1;
     return;
   }
 
   for (int i = 0; i < node->num_children; i++)
-    get_lexeme_list_helper(id_list, (node->children)[i], curr_stored, capacity);
+  {
+    parse_tree_node *child = (node->children)[i];
+    if (child->nt == multipleIdList || child->nt == idList || child->t == ID)
+      get_lexeme_list_helper(id_list, child, curr_stored, capacity);
+  }
 }
 
 char **get_lexeme_list(parse_tree_node *node, int *num_id)
 {
   int capacity = 1;
   char **id_list = (char **)calloc(1, sizeof(char *));
-  for (int i = 0; i < node->num_children; i++)
-  {
-    parse_tree_node *child = (node->children)[i];
-    if ((child->is_terminal && child->t == ID) || (child->is_terminal == false && child->nt == multipleIdList))
-    {
-      get_lexeme_list_helper(&id_list, child, num_id, &capacity);
-    }
-  }
+  get_lexeme_list_helper(&id_list, node, num_id, &capacity);
   return id_list;
 }
 
@@ -103,7 +80,7 @@ void set_table_entry_for_prim_stmt(parse_tree_node *node, hash_map *type_exp_tab
   for (int i = 0; i < node->num_children; i++)
   {
     parse_tree_node *child = (node->children)[i];
-    if (child->is_terminal == false && child->nt == primitiveDataType)
+    if (child->nt == primitiveDataType)
     {
       if (child->num_children == 0)
         assert(false, "[set_table_entry_for_prim_stmt] primitiveDataType's child not found in parse tree");
@@ -138,6 +115,74 @@ void set_table_entry_for_prim_stmt(parse_tree_node *node, hash_map *type_exp_tab
     entry->type = primitive;
     entry->prim_entry = prim_entry;
     insert_into_map(type_exp_table, prim_entry->lexeme, entry);
+  }
+  free(id_list);
+}
+
+void get_arr_range_info(array_id_entry *dummy_array_entry, parse_tree_node *node)
+{
+  if (node->nt == arrayRange)
+  {
+    if (dummy_array_entry->num_dimensions == dummy_array_entry->range_arr_capacity)
+    {
+      // reallocate
+      dummy_array_entry->range_arr_capacity *= 2;
+      dummy_array_entry->range_start = (token_node **)realloc(dummy_array_entry->range_start, sizeof(token_node *) * (dummy_array_entry->range_arr_capacity));
+      dummy_array_entry->range_end = (token_node **)realloc(dummy_array_entry->range_end, sizeof(token_node *) * (dummy_array_entry->range_arr_capacity));
+    }
+    if (node->num_children < 4)
+      assert(false, "[get_arr_range_info] arrayRange node has insufficient children");
+    parse_tree_node *range_st_dim = (((node->children)[1])->children)[0]; // arrayRange->children[1] points to numOrId and then its first child points to NUM or ID
+    parse_tree_node *range_en_dim = (((node->children)[3])->children)[0]; // arrayRange->children[3] points to numOrId and then its first child points to NUM or ID
+    if (range_st_dim->t == ID || range_en_dim->t == ID)
+      dummy_array_entry->is_static = false;
+    (dummy_array_entry->range_start)[dummy_array_entry->num_dimensions] = range_st_dim->token;
+    (dummy_array_entry->range_end)[dummy_array_entry->num_dimensions] = range_en_dim->token;
+
+    dummy_array_entry->num_dimensions += 1;
+    return;
+  }
+
+  for (int i = 0; i < node->num_children; i++)
+  {
+    parse_tree_node *child = (node->children)[i];
+    if (child->nt == arrayRangeList || child->nt == arrayRange)
+      get_arr_range_info(dummy_array_entry, child);
+  }
+}
+
+void set_table_entry_for_arr_stmt(parse_tree_node *node, hash_map *type_exp_table)
+{
+  // check if node is valid array type node
+  if (node->is_terminal || node->nt != arrayDecStmt || node->num_children == 0)
+    assert(false, "[set_table_entry_for_arr_stmt] declaration statement node invalid.");
+
+  array_id_entry dummy_array_entry;
+  dummy_array_entry.is_static = true;
+  dummy_array_entry.num_dimensions = 0;
+  dummy_array_entry.range_arr_capacity = 1;
+  dummy_array_entry.range_end = (token_node **)calloc(1, sizeof(token_node *));
+  dummy_array_entry.range_start = (token_node **)calloc(1, sizeof(token_node *));
+  get_arr_range_info(&dummy_array_entry, node);
+
+  // get list of identifiers
+  int num_id = 0;
+  char **id_list = get_lexeme_list(node, &num_id);
+  // for each identifier, set the table entry
+  for (int i = 0; i < num_id; i++)
+  {
+    array_id_entry *array_entry = (array_id_entry *)calloc(1, sizeof(array_id_entry));
+    array_entry->is_static = dummy_array_entry.is_static;
+    array_entry->lexeme = id_list[i];
+    array_entry->num_dimensions = dummy_array_entry.num_dimensions;
+    array_entry->range_arr_capacity = dummy_array_entry.range_arr_capacity;
+    array_entry->range_end = dummy_array_entry.range_end;
+    array_entry->range_start = dummy_array_entry.range_start;
+
+    type_exp_table_entry *entry = init_table_entry();
+    entry->type = array;
+    entry->arr_entry = array_entry;
+    insert_into_map(type_exp_table, id_list[i], entry);
   }
   free(id_list);
 }

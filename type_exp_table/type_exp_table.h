@@ -40,7 +40,8 @@ typedef struct __ARRAY_ID_ENTRY__
 {
   char *lexeme;
   bool is_static;
-  int dimensions;
+  int num_dimensions;
+  int range_arr_capacity;
   token_node **range_start;
   token_node **range_end;
 } array_id_entry;
@@ -48,7 +49,7 @@ typedef struct __ARRAY_ID_ENTRY__
 typedef struct __JAGGED_ARR_ID_ENTRY__
 {
   char *lexeme;
-  int dimensions;
+  int num_dimensions;
   int range_start;
   int range_end;
   int **sizes;
@@ -70,5 +71,7 @@ hash_map *init_type_exp_table();
 id_type get_id_type_from_dec_stmt_node(parse_tree_node *node);
 
 void set_table_entry_for_prim_stmt(parse_tree_node *node, hash_map *type_exp_table);
+
+void set_table_entry_for_arr_stmt(parse_tree_node *node, hash_map *type_exp_table);
 
 #endif

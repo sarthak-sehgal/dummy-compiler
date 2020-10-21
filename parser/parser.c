@@ -177,7 +177,7 @@ void set_declaration_types(parse_tree_node *root, hash_map *type_exp_table)
     }
     else if (stmt_type == array)
     {
-      // TO DO
+      set_table_entry_for_arr_stmt((root->children)[0], type_exp_table);
     }
     else if (stmt_type == jag_array)
     {

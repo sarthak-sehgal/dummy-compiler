@@ -198,7 +198,7 @@ void print_pda_stack(pda_stack *st)
 
 void print_primitive_type(primitive_id_entry *data)
 {
-  printf("\t\tNO\t\t\t|\t\tnot_applicable\t\t|\t\t<type=");
+  printf("\t0\t|\tnot_applicable\t|\t<type=");
   if (data->type == integer)
     printf("integer");
   else if (data->type == real)
@@ -210,15 +210,34 @@ void print_primitive_type(primitive_id_entry *data)
   printf(">\n");
 }
 
+void print_array_type(array_id_entry *data)
+{
+  printf("\t1\t|\t");
+  if (data->is_static)
+    printf("static\t\t|");
+  else
+    printf("dynamic\t\t|");
+
+  printf("\t<type=rectangularArray, dimensions=%d, ", data->num_dimensions);
+  for (int i = 0; i < data->num_dimensions; i++)
+  {
+    // TO DO: resolve lexemes for dynamic arrays
+    char *range_beg = ((data->range_start)[i])->lexeme;
+    char *range_end = ((data->range_end)[i])->lexeme;
+    printf("range_R%d=(%s,%s), ", i + 1, range_beg, range_end);
+  }
+  printf("basicElementType=integer>\n");
+}
+
 void print_type_exp_table(hash_map *type_exp_table)
 {
   printf("\n\n---------- BEGIN TYPE EXPRESSION TABLE ----------\n\n");
-  printf("\t\tField 1\t\t\t|\t\tField 2\t\t\t|\t\tField 3\t\t\t|\t\tField 4\n");
+  printf("\tField 1\t|\tField 2\t|\tField 3\t\t|\tField 4\n");
   map_node *key_root = get_all_map_nodes(type_exp_table);
   int count = 0;
   while (key_root)
   {
-    printf("\t\t%s\t\t\t|", key_root->string);
+    printf("\t%s\t|", key_root->string);
     type_exp_table_entry *data = key_root->data;
     if (data->type == primitive)
     {
@@ -226,7 +245,7 @@ void print_type_exp_table(hash_map *type_exp_table)
     }
     else if (data->type == array)
     {
-      // TO DO
+      print_array_type(data->arr_entry);
     }
     else if (data->type == jag_array)
     {
