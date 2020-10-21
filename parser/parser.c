@@ -86,8 +86,7 @@ bool parse_tree_helper(pda_stack *stack, token_node *ts_pointer, grammar *G, par
 
       // connect the terminal with its parent
       parse_tree_node *pt_node = stack_elem_to_pt_node(st_top);
-      pt_node->line_num = ts_pointer->line_num;
-      pt_node->lexeme = ts_pointer->lexeme;
+      pt_node->token = ts_pointer;
       if (st_top->par_node != NULL)
         add_pt_child(st_top->par_node, pt_node);
       pop_from_stack(stack);

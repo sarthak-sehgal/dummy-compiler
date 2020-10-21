@@ -121,7 +121,7 @@ void print_tree_node(parse_tree_node *node, int depth, bool print_symbol)
   printf("(tok %s, ", buffer);
   if (node->is_terminal)
   {
-    printf("T, lex %s, line %d, dep %d)", node->lexeme, node->line_num, depth);
+    printf("T, lex %s, line %d, dep %d)", node->token->lexeme, node->token->line_num, depth);
   }
   else
   {
