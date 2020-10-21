@@ -119,6 +119,10 @@ hash_map *generate_nt_map(int map_size)
   *temp = 26;
   insert_into_map(map, "andExpression", temp);
 
+  temp = calloc(1, sizeof(int));
+  *temp = 27;
+  insert_into_map(map, "arrayDecStmt", temp);
+
   temp = NULL;
   return map;
 }

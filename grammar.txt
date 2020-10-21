@@ -4,9 +4,12 @@ decStmtGrp decStmt
 assignStmtGrp assignStmt assignStmtGrp
 assignStmtGrp assignStmt
 decStmt primitiveDecStmt
+decStmt arrayDecStmt
 decStmt jagArrDecStmt
 primitiveDecStmt DECLARE ID COLON primitiveDataType SEMICOL
 primitiveDecStmt DECLARE LIST OF VARIABLES multipleIdList COLON primitiveDataType SEMICOL
+arrayDecStmt DECLARE ID COLON ARRAY arrayRangeList OF INTEGER SEMICOL
+arrayDecStmt DECLARE LIST OF VARIABLES multipleIdList COLON ARRAY arrayRangeList OF INTEGER SEMICOL
 jagArrDecStmt DECLARE ID COLON JAGGED ARRAY jagArrRange OF INTEGER SEMICOL jagArrInit
 jagArrDecStmt DECLARE LIST OF VARIABLES multipleIdList COLON JAGGED ARRAY jagArrRange OF INTEGER SEMICOL jagArrInit
 jagArrInit jagArrDimDec jagArrInit
@@ -24,7 +27,6 @@ idList ID COMMA idList
 primitiveDataType INTEGER
 primitiveDataType REAL
 primitiveDataType BOOLEAN
-primitiveDataType ARRAY arrayRangeList OF INTEGER
 arrayRangeList arrayRange arrayRangeList
 arrayRangeList arrayRange
 arrayRange SQOP numOrId ELIP numOrId SQCL

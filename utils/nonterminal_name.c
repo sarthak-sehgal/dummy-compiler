@@ -90,6 +90,8 @@ void get_nt_name(nonterminal t, char *name)
     break;
   case 26:
     strcpy(name, "andExpression");
+  case 27:
+    strcpy(name, "arrayDecStmt");
     break;
   }
 }
