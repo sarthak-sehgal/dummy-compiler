@@ -18,15 +18,17 @@
 #include "./utils/grammar_reader.h"
 #include "./utils/print.h"
 #include "./type_exp_table/type_exp_table.h"
+#include "./data_structures/errors.h"
 #include "./driver.h"
 
 char grammar_file[150] = "./grammar.txt";
 char source_code_file[150] = "./source_code.txt";
-bool grammar_read = false, tokenised = false, pt_created = false, type_table_created = false;
+bool grammar_read = false, tokenised = false, pt_created = false, type_table_created = false, error_container_created = false;
 grammar *G = NULL;
 token_stream *ts = NULL;
 parse_tree_node *pt_root = NULL;
 hash_map *type_table = NULL;
+error_container *err_container = NULL;
 
 void initialise()
 {
@@ -51,6 +53,11 @@ void initialise()
 
 void init_type_table()
 {
+  if (!error_container_created)
+  {
+    err_container = init_error_container();
+    error_container_created = true;
+  }
   if (!type_table_created)
   {
     type_table = init_type_exp_table();
@@ -90,6 +97,7 @@ int main()
     case 2: // print type errors
       initialise();
       init_type_table();
+      print_errors(err_container);
       break;
     case 3: // print parse tree
       initialise();

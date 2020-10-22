@@ -290,3 +290,32 @@ void print_type_exp_table(hash_map *type_exp_table)
   printf("\nTotal number of variables: %d", count);
   printf("\n\n---------- END TYPE EXPRESSION TABLE ----------\n\n");
 }
+
+void print_errors(error_container *err_container)
+{
+  if (err_container->curr_num == 0)
+  {
+    printf("\nNo error found!\n");
+    return;
+  }
+  printf("\n\n---------- BEGIN ERRORS ----------\n\n");
+  char *error_msg = (char *)calloc(30, sizeof(char));
+  for (int i = 0; i < err_container->curr_num; i++)
+  {
+    error_elem *error = (err_container->errors_arr)[i];
+    get_error_string(error->err_type, error_msg);
+    printf("\n%d. Line %d, Error: %s, Tree depth: %d, Statement Type: ", i + 1, error->line_num, error_msg, error->parse_tree_depth);
+    if (error->statement_type == decStmt)
+      printf("declaration.\n");
+    else
+    {
+      char *op1_id = (char *)calloc(300, sizeof(char));
+      char *op2_id = (char *)calloc(300, sizeof(char));
+      get_t_name(error->operand1_token->token_name, op1_id);
+      get_t_name(error->operand2_token->token_name, op2_id);
+      printf("assignment, Operator: %s, Op1: (%s, %s), Op2: (%s, %s).\n", error->operation_token->lexeme, error->operand1_token->lexeme, op1_id, error->operand2_token->lexeme, op2_id);
+    }
+  }
+  free(error_msg);
+  printf("\n\n---------- END ERRORS ----------\n\n");
+}
