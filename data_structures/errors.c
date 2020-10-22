@@ -41,7 +41,7 @@ void get_error_string(error_type err_type, char *buffer)
     strcpy(buffer, "JA num list overflow");
     break;
   case jagArrNumListUnderflow:
-    strcpy(buffer, "JA num list underflow");
+    strcpy(buffer, "JA num list empty");
     break;
   case jagArrIndexOutOfBounds:
     strcpy(buffer, "JA index out of bounds");

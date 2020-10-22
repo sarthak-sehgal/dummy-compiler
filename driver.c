@@ -61,7 +61,7 @@ void init_type_table()
   if (!type_table_created)
   {
     type_table = init_type_exp_table();
-    traverse_parse_tree(pt_root, type_table);
+    traverse_parse_tree(pt_root, type_table, err_container);
     type_table_created = true;
   }
 }

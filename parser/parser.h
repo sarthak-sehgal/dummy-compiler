@@ -15,6 +15,7 @@
 #include "../data_structures/pda_stack.h"
 #include "../data_structures/parse_tree.h"
 #include "../data_structures/token_stream.h"
+#include "../data_structures/errors.h"
 #include "../type_exp_table/type_exp_table.h"
 
 #ifndef PARSER_H
@@ -22,6 +23,6 @@
 
 void create_parse_tree(parse_tree_node **pt, grammar *G, token_stream *ts);
 
-void traverse_parse_tree(parse_tree_node *tree_root, hash_map *type_exp_table);
+void set_declaration_types(parse_tree_node *root, hash_map *type_exp_table, error_container *err_container, int depth);
 
 #endif

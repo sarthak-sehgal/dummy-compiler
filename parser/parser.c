@@ -161,7 +161,7 @@ bool parse_tree_helper(pda_stack *stack, token_node *ts_pointer, grammar *G, par
   return false;
 }
 
-void set_declaration_types(parse_tree_node *root, hash_map *type_exp_table)
+void set_declaration_types(parse_tree_node *root, hash_map *type_exp_table, error_container *err_container, int depth)
 {
   if (root->is_terminal)
     return;
@@ -182,7 +182,7 @@ void set_declaration_types(parse_tree_node *root, hash_map *type_exp_table)
     }
     else if (stmt_type == jag_array)
     {
-      set_table_entry_for_jag_arr_stmt(node, type_exp_table);
+      set_table_entry_for_jag_arr_stmt(node, type_exp_table, err_container, depth);
     }
     else
     {
@@ -192,10 +192,10 @@ void set_declaration_types(parse_tree_node *root, hash_map *type_exp_table)
   }
 
   for (int i = 0; i < root->num_children; i++)
-    set_declaration_types((root->children)[i], type_exp_table);
+    set_declaration_types((root->children)[i], type_exp_table, err_container, depth + 1);
 }
 
-void traverse_parse_tree(parse_tree_node *tree_root, hash_map *type_exp_table)
+void traverse_parse_tree(parse_tree_node *tree_root, hash_map *type_exp_table, error_container *err_container)
 {
-  set_declaration_types(tree_root, type_exp_table);
+  set_declaration_types(tree_root, type_exp_table, err_container, 0);
 }
