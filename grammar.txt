@@ -36,16 +36,12 @@ jagArrRange SQOP NUM ELIP NUM SQCL SQOP SQCL
 jagArrRange SQOP NUM ELIP NUM SQCL SQOP SQCL SQOP SQCL
 numOrIdList numOrId numOrIdList
 numOrIdList numOrId
-jagArrElement ID SQOP numOrId numOrId SQCL
-jagArrElement ID SQOP numOrId numOrId numOrId SQCL
 arrayElement ID SQOP numOrIdList SQCL
 operand ID
 operand NUM
 operand arrayElement
-operand jagArrElement
 assignLhs ID
 assignLhs arrayElement
-assignLhs jagArrElement
 assignStmt assignLhs EQUALS arithExpression SEMICOL
 assignStmt ID EQUALS boolExpression SEMICOL
 arithExpression term PLUS arithExpression
