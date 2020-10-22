@@ -287,7 +287,8 @@ void print_type_exp_table(hash_map *type_exp_table)
     count++;
   }
   delete_map_node_list(key_root);
-  printf("\nTotal number of variables: %d", count);
+  printf("\nTotal number of VALID variables: %d", count);
+  printf("\n\n*****NOTE: Type expression for variables having error in declaration is not shown*****");
   printf("\n\n---------- END TYPE EXPRESSION TABLE ----------\n\n");
 }
 
@@ -309,11 +310,27 @@ void print_errors(error_container *err_container)
       printf("declaration.\n");
     else
     {
-      char *op1_id = (char *)calloc(300, sizeof(char));
+      printf("assignment");
       char *op2_id = (char *)calloc(300, sizeof(char));
-      get_t_name(error->operand1_token->token_name, op1_id);
-      get_t_name(error->operand2_token->token_name, op2_id);
-      printf("assignment, Operator: %s, Op1: (%s, %s), Op2: (%s, %s).\n", error->operation_token->lexeme, error->operand1_token->lexeme, op1_id, error->operand2_token->lexeme, op2_id);
+      if (error->operand1_token)
+      {
+        char *op1_id = (char *)calloc(300, sizeof(char));
+        get_t_name(error->operand1_token->token_name, op1_id);
+        printf(", Op1: (%s, %s)", error->operand1_token->lexeme, op1_id);
+        free(op1_id);
+      }
+      if (error->operand2_token)
+      {
+        char *op2_id = (char *)calloc(300, sizeof(char));
+        get_t_name(error->operand2_token->token_name, op2_id);
+        printf(", Op2: (%s, %s)", error->operand2_token->lexeme, op2_id);
+        free(op2_id);
+      }
+      if (error->operation_token)
+      {
+        printf(", Operator: %s", error->operation_token->lexeme);
+      }
+      printf(".\n");
     }
   }
   free(error_msg);

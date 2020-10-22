@@ -213,7 +213,6 @@ void set_jag_arr_dim_and_range(parse_tree_node *node, jagged_arr_id_entry *jag_a
 
   if (range_node->nt != jagArrRange || range_node->num_children < 4)
   {
-    printf("\nrange node error %d", range_node->num_children);
     assert(false, "[set_jag_arr_dim_and_range] jagged array range node not found or invalid");
   }
 
@@ -245,30 +244,40 @@ int get_num_count(parse_tree_node *node)
   return cnt;
 }
 
+void create_and_add_error(error_container *err_container,
+                          int line_num,
+                          int parse_tree_depth,
+                          error_type err_type,
+                          nonterminal statement_type,
+                          token_node *operation_token,
+                          token_node *operand1_token,
+                          token_node *operand2_token)
+{
+  error_elem *error = init_error();
+  error->line_num = line_num;
+  error->statement_type = statement_type;
+  error->operand1_token = operand1_token;
+  error->operation_token = operation_token;
+  error->operand2_token = operand2_token;
+  error->parse_tree_depth = parse_tree_depth;
+  error->err_type = err_type;
+  add_error(err_container, error);
+}
+
 void set_jag_arr_value_sizes(parse_tree_node *node, jagged_arr_id_entry *jag_arr_entry, int *values_cnt, int max_val_count, int sizes_idx, int depth, error_container *err_container)
 {
   if (node->nt == numList)
   {
     if ((*values_cnt) >= max_val_count)
     {
-      error_elem *error = init_error();
-      error->err_type = jagArrNumListOverflow;
-      error->line_num = get_nt_line_num(node);
-      error->parse_tree_depth = depth;
-      error->statement_type = decStmt;
-      add_error(err_container, error);
+      create_and_add_error(err_container, get_nt_line_num(node), depth, jagArrNumListOverflow, decStmt, NULL, NULL, NULL);
       return;
     }
 
     int num_count = get_num_count(node);
     if (num_count == 0)
     {
-      error_elem *error = init_error();
-      error->err_type = jagArrNumListUnderflow;
-      error->line_num = get_nt_line_num(node);
-      error->parse_tree_depth = depth;
-      error->statement_type = decStmt;
-      add_error(err_container, error);
+      create_and_add_error(err_container, get_nt_line_num(node), depth, jagArrNumListUnderflow, decStmt, NULL, NULL, NULL);
       return;
     }
 
@@ -299,12 +308,7 @@ void set_jag_arr_sizes(parse_tree_node *node, jagged_arr_id_entry *jag_arr_entry
     int idx = string_to_num(idx_node->token->lexeme);
     if (idx < jag_arr_entry->range_start || idx > jag_arr_entry->range_end)
     {
-      error_elem *error = init_error();
-      error->err_type = jagArrIndexOutOfBounds;
-      error->line_num = idx_node->token->line_num;
-      error->parse_tree_depth = depth;
-      error->statement_type = decStmt;
-      add_error(err_container, error);
+      create_and_add_error(err_container, idx_node->token->line_num, depth, jagArrIndexOutOfBounds, decStmt, NULL, NULL, NULL);
       return;
     }
 
@@ -314,12 +318,7 @@ void set_jag_arr_sizes(parse_tree_node *node, jagged_arr_id_entry *jag_arr_entry
     int size = string_to_num(size_node->token->lexeme);
     if (size <= 0)
     {
-      error_elem *error = init_error();
-      error->err_type = jagArrDecSizeUnderflow;
-      error->line_num = size_node->token->line_num;
-      error->parse_tree_depth = depth;
-      error->statement_type = decStmt;
-      add_error(err_container, error);
+      create_and_add_error(err_container, idx_node->token->line_num, depth, jagArrDecSizeUnderflow, decStmt, NULL, NULL, NULL);
       return;
     }
 
@@ -357,12 +356,8 @@ void set_table_entry_for_jag_arr_stmt(parse_tree_node *node, hash_map *type_exp_
   int range_end = dummy_jag_arr_entry.range_end;
   if (range_end < range_start)
   {
-    error_elem *error = init_error();
-    error->statement_type = decStmt;
-    error->err_type = jagArrNegativeRange;
-    error->line_num = get_nt_line_num(node);
-    error->parse_tree_depth = depth;
-    add_error(err_container, error);
+    create_and_add_error(err_container, get_nt_line_num(node), depth, jagArrNegativeRange, decStmt, NULL, NULL, NULL);
+    return;
   }
 
   int jag_arr_size = range_end - range_start + 1;
@@ -399,4 +394,222 @@ void set_table_entry_for_jag_arr_stmt(parse_tree_node *node, hash_map *type_exp_
     insert_into_map(type_exp_table, id_list[i], entry);
   }
   free(id_list);
+}
+
+bool check_jag_arr_dimensions(parse_tree_node *node, hash_map *type_exp_table, jagged_arr_id_entry *arr_type_exp, error_container *err_container, int depth, int *dim_count, int *dim1, int *dim2)
+{
+  if (node->nt == numOrId)
+  {
+    if (*dim_count >= arr_type_exp->num_dimensions)
+    {
+      create_and_add_error(err_container, get_nt_line_num(node), depth, arr_type_exp->num_dimensions == 2 ? jagArr2dSizeMismatch : jagArr3dSizeMismatch, assignStmt, NULL, NULL, NULL);
+      return false;
+    }
+
+    node = (node->children)[0];
+    if (node->t == NUM)
+    {
+      int num = string_to_num(node->token->lexeme);
+      int range_beg, range_end;
+      if (*dim_count == 0)
+      {
+        range_beg = arr_type_exp->range_start;
+        range_end = arr_type_exp->range_end;
+        (*dim1) = num;
+      }
+      else
+      {
+        int *range = (arr_type_exp->sizes)[(*dim1 - arr_type_exp->range_start)];
+        range_beg = 0;
+        if (*dim_count == 1)
+        {
+          range_end = range[0] - 1;
+          (*dim2) = num;
+        }
+        else
+          range_end = range[1 + (*dim2)] - 1;
+      }
+
+      if (num < range_beg || num > range_end)
+      {
+        create_and_add_error(err_container, node->token->line_num, depth + 1, jagArrIndexOutOfBounds, assignStmt, NULL, node->token, NULL);
+        return false;
+      }
+    }
+    else if (node->t == ID)
+    {
+      type_exp_table_entry *identifier = find_in_map(type_exp_table, node->token->lexeme);
+      if (identifier == NULL || identifier->type != primitive || identifier->prim_entry->type != integer)
+      {
+        create_and_add_error(err_container, node->token->line_num, depth + 1, identifier == NULL ? declarationInvalid : invalidArrayIndexType, assignStmt, NULL, node->token, NULL);
+        return false;
+      }
+    }
+    else
+    {
+      assert(false, "[check_jag_arr_dimensions] invalid node numOrId");
+    }
+
+    (*dim_count)++;
+  }
+
+  bool res = true;
+  for (int i = 0; i < node->num_children; i++)
+  {
+    res = res && check_jag_arr_dimensions((node->children)[i], type_exp_table, arr_type_exp, err_container, depth + 1, dim_count, dim1, dim2);
+  }
+
+  return res;
+}
+
+bool check_array_dimensions(parse_tree_node *node, hash_map *type_exp_table, array_id_entry *arr_type_exp, error_container *err_container, int depth, int *dim_count)
+{
+  if (node->nt == numOrId)
+  {
+    if (*dim_count >= arr_type_exp->num_dimensions)
+    {
+      create_and_add_error(err_container, get_nt_line_num(node), depth, arrSizeMismatch, assignStmt, NULL, NULL, NULL);
+      return false;
+    }
+
+    node = (node->children)[0];
+    if (node->t == NUM)
+    {
+      int num = string_to_num(node->token->lexeme);
+      token_node *range_st = (arr_type_exp->range_start)[*dim_count];
+      token_node *range_en = (arr_type_exp->range_end)[*dim_count];
+      if ((range_st->token_name == NUM && num < string_to_num(range_st->lexeme)) || ((range_en->token_name == NUM && num > string_to_num(range_en->lexeme))))
+      {
+        create_and_add_error(err_container, node->token->line_num, depth + 1, arrIndexOutOfBounds, assignStmt, NULL, node->token, NULL);
+        return false;
+      }
+    }
+    else if (node->t == ID)
+    {
+      type_exp_table_entry *identifier = find_in_map(type_exp_table, node->token->lexeme);
+      if (identifier == NULL || identifier->type != primitive || identifier->prim_entry->type != integer)
+      {
+        create_and_add_error(err_container, node->token->line_num, depth + 1, identifier == NULL ? declarationInvalid : invalidArrayIndexType, assignStmt, NULL, node->token, NULL);
+        return false;
+      }
+    }
+    else
+    {
+      assert(false, "[check_array_dimensions] invalid node numOrId");
+    }
+
+    (*dim_count)++;
+    return true;
+  }
+
+  bool res = true;
+  for (int i = 0; i < node->num_children; i++)
+  {
+    res = res && check_array_dimensions((node->children)[i], type_exp_table, arr_type_exp, err_container, depth + 1, dim_count);
+  }
+
+  return res;
+}
+
+bool is_arr_element_valid(parse_tree_node *node, hash_map *type_exp_table, error_container *err_container, int depth)
+{
+  if (node->nt != arrayElement)
+    assert(false, "[is_arr_element_valid] invalid node passed");
+
+  parse_tree_node *identifier = (node->children)[0];
+  if (identifier->t != ID)
+    assert(false, "[is_arr_element_valid] invalid node passed");
+
+  type_exp_table_entry *type_exp = (type_exp_table_entry *)find_in_map(type_exp_table, identifier->token->lexeme);
+  if (type_exp == NULL || type_exp->type == primitive)
+  {
+    create_and_add_error(err_container, identifier->token->line_num, depth + 1, type_exp == NULL ? declarationInvalid : idNotArray, assignStmt, NULL, identifier->token, NULL);
+    return false;
+  }
+  else if (type_exp->type == array)
+  {
+    int dim_count = 0;
+    bool res = check_array_dimensions((node->children)[2], type_exp_table, type_exp->arr_entry, err_container, depth, &dim_count);
+    if (res && dim_count < type_exp->arr_entry->num_dimensions)
+    {
+      create_and_add_error(err_container, get_nt_line_num((node->children)[2]), depth, arrSizeMismatch, assignStmt, NULL, NULL, NULL);
+      return false;
+    }
+    return res;
+  }
+  else if (type_exp->type == jag_array)
+  {
+    int dim_count = 0;
+    int dim1 = -1;
+    int dim2 = -1;
+    bool res = check_jag_arr_dimensions((node->children)[2], type_exp_table, type_exp->jag_arr_entry, err_container, depth, &dim_count, &dim1, &dim2);
+    if (res && dim_count < type_exp->jag_arr_entry->num_dimensions)
+    {
+      create_and_add_error(err_container, get_nt_line_num((node->children)[2]), depth, type_exp->jag_arr_entry->num_dimensions == 2 ? jagArr2dSizeMismatch : jagArr3dSizeMismatch, assignStmt, NULL, NULL, NULL);
+      return false;
+    }
+    return res;
+  }
+  else
+  {
+    assert(false, "[is_arr_element_valid] type not recognized");
+  }
+
+  return true;
+}
+
+primitive_id_type get_assignment_lhs_type(parse_tree_node *node, hash_map *type_exp_table, error_container *err_container, int depth, bool *is_error)
+{
+  type_exp_table_entry *type_exp = NULL;
+  if (node->t == ID)
+  {
+    type_exp = (type_exp_table_entry *)find_in_map(type_exp_table, node->token->lexeme);
+    if (type_exp == NULL || type_exp->type != primitive)
+    {
+      create_and_add_error(err_container, node->token->line_num, depth, type_exp == NULL ? declarationInvalid : arrSizeMismatch, assignStmt, NULL, node->token, NULL);
+      *is_error = true;
+      return 0;
+    }
+    return type_exp->prim_entry->type;
+  }
+
+  if (node->nt != assignLhs || node->num_children < 1)
+    assert(false, "[get_assignment_lhs_type] invalid assignment node");
+
+  node = (node->children)[0];
+  depth += 1;
+
+  if (node->t == ID)
+  {
+    type_exp = (type_exp_table_entry *)find_in_map(type_exp_table, node->token->lexeme);
+    if (type_exp == NULL || type_exp->type != primitive)
+    {
+      create_and_add_error(err_container, node->token->line_num, depth, type_exp == NULL ? declarationInvalid : arrSizeMismatch, assignStmt, NULL, node->token, NULL);
+      *is_error = true;
+      return 0;
+    }
+    return type_exp->prim_entry->type;
+  }
+  if (is_arr_element_valid(node, type_exp_table, err_container, depth + 1))
+  {
+    return integer;
+  }
+  else
+  {
+    *is_error = true;
+  }
+
+  return 0;
+}
+
+void set_assignment_errors(parse_tree_node *node, hash_map *type_exp_table, error_container *err_container, int depth)
+{
+  if (node->nt != assignStmt)
+    assert(false, "[set_assignment_errors] invalid node passed");
+
+  bool is_error = false;
+  primitive_id_type lhs_type = get_assignment_lhs_type((node->children)[0], type_exp_table, err_container, depth + 1, &is_error);
+
+  if (is_error)
+    return;
 }

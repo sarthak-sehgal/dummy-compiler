@@ -58,7 +58,27 @@ void get_error_string(error_type err_type, char *buffer)
   case jagArr3dSizeMismatch:
     strcpy(buffer, "JA 3D size mismatch");
     break;
-
+  case arrSizeMismatch:
+    strcpy(buffer, "Array size mismatch");
+    break;
+  case typeMismatch:
+    strcpy(buffer, "Data type mismatch");
+    break;
+  case boolInvalidOp:
+    strcpy(buffer, "Invalid operator with bool");
+    break;
+  case idNotArray:
+    strcpy(buffer, "Identifier not array");
+    break;
+  case arrIndexOutOfBounds:
+    strcpy(buffer, "Array index out of bounds");
+    break;
+  case invalidArrayIndexType:
+    strcpy(buffer, "Invalid array index type");
+    break;
+  case declarationInvalid:
+    strcpy(buffer, "Declaration of identifier invalid");
+    break;
   default:
     assert(false, "[get_error_string] error type not identified!");
     break;

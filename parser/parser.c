@@ -182,7 +182,7 @@ void set_declaration_types(parse_tree_node *root, hash_map *type_exp_table, erro
     }
     else if (stmt_type == jag_array)
     {
-      set_table_entry_for_jag_arr_stmt(node, type_exp_table, err_container, depth);
+      set_table_entry_for_jag_arr_stmt(node, type_exp_table, err_container, depth + 1);
     }
     else
     {
@@ -195,7 +195,25 @@ void set_declaration_types(parse_tree_node *root, hash_map *type_exp_table, erro
     set_declaration_types((root->children)[i], type_exp_table, err_container, depth + 1);
 }
 
+void set_type_errors(parse_tree_node *root, hash_map *type_exp_table, error_container *err_container, int depth)
+{
+  if (root->is_terminal)
+    return;
+  if (root->is_terminal == false && root->nt == decStmtGrp)
+    return;
+
+  if (root->nt == assignStmt)
+  {
+    set_assignment_errors(root, type_exp_table, err_container, depth);
+    return;
+  }
+
+  for (int i = 0; i < root->num_children; i++)
+    set_type_errors((root->children)[i], type_exp_table, err_container, depth + 1);
+}
+
 void traverse_parse_tree(parse_tree_node *tree_root, hash_map *type_exp_table, error_container *err_container)
 {
   set_declaration_types(tree_root, type_exp_table, err_container, 0);
+  set_type_errors(tree_root, type_exp_table, err_container, 0);
 }

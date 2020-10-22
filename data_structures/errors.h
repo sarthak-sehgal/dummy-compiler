@@ -21,6 +21,13 @@ typedef enum error_type
   jagArrNegativeRange,
   jagArr2dSizeMismatch,
   jagArr3dSizeMismatch,
+  arrSizeMismatch,
+  typeMismatch,
+  boolInvalidOp,
+  idNotArray,
+  arrIndexOutOfBounds,
+  invalidArrayIndexType,
+  declarationInvalid
 } error_type;
 
 typedef struct error_elem

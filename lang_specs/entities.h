@@ -76,6 +76,7 @@ enum __NONTERMINAL__
   arrayRange,
   numOrId,
   numOrIdList,
+  // TO DO: remove jagArrElement
   jagArrElement,
   arrayElement,
   operand,

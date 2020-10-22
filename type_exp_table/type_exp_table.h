@@ -78,4 +78,6 @@ void set_table_entry_for_arr_stmt(parse_tree_node *node, hash_map *type_exp_tabl
 
 void set_table_entry_for_jag_arr_stmt(parse_tree_node *node, hash_map *type_exp_table, error_container *err_container, int depth);
 
+void set_assignment_errors(parse_tree_node *node, hash_map *type_exp_table, error_container *err_container, int depth);
+
 #endif
