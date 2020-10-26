@@ -64,9 +64,14 @@ void get_error_string(error_type err_type, char *buffer)
   case typeMismatch:
     strcpy(buffer, "Data type mismatch");
     break;
-  case boolInvalidOp:
-    strcpy(buffer, "Invalid operator with bool");
+  case invalidBoolOperation:
+    strcpy(buffer, "Invalid operator for boolean operands");
     break;
+  case invalidArithmeticOperation:
+    strcpy(buffer, "Invalid operator for arithmetic operands");
+    break;
+  case invalidDivisionOperation:
+    strcpy(buffer, "Invalid operands for division");
   case idNotArray:
     strcpy(buffer, "Identifier not array");
     break;
