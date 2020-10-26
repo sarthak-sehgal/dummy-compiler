@@ -82,9 +82,9 @@ enum __NONTERMINAL__
   operand,
   assignLhs,
   arithExpression,
-  boolExpression,
+  boolExpression, // remove
   term,
-  andExpression,
+  andExpression, // remove
   arrayDecStmt
 };
 typedef enum __NONTERMINAL__ nonterminal;

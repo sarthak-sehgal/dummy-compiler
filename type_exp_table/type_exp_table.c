@@ -299,7 +299,7 @@ void set_jag_arr_sizes(parse_tree_node *node, jagged_arr_id_entry *jag_arr_entry
 {
   if (node->nt == jagArrDimDec)
   {
-    if (node->num_children < 11)
+    if (node->num_children < 11) // should this be 12 instead
       assert(false, "[set_jag_arr_sizes] corrupt node jagArrDimDec");
 
     parse_tree_node *idx_node = (node->children)[2];
@@ -602,14 +602,239 @@ primitive_id_type get_assignment_lhs_type(parse_tree_node *node, hash_map *type_
   return 0;
 }
 
+void check_expression_compatibility(parse_tree_node *node, 
+                                    primitive_id_type operand1_type, 
+                                    primitive_id_type operand2_type, 
+                                    terminal operator, 
+                                    error_container *err_container, 
+                                    bool *is_error, 
+                                    int depth) 
+{
+  
+  token_node *operation_token = ((node->children)[1])->token;
+  token_node *operand1_token = ((node->children)[0])->token;
+  token_node *operand2_token = ((node->children)[2])->token;
+
+  if (operand1_type!=operand2_type)
+  {
+    create_and_add_error(err_container, operation_token->line_num, depth, typeMismatch, assignStmt, operation_token, operand1_token, operand2_token);
+    *is_error = true;
+  }
+  // TODO : expand into different rules 
+  else if ((operand1_type == boolean && (operator == PLUS || operator == MINUS || operator == DIV || operator == MUL))) 
+  {
+    create_and_add_error(err_container, operation_token->line_num, depth, invalidBoolOperation, assignStmt, operation_token, operand1_token, operand2_token);
+    *is_error = true;
+  }
+  else if ((operand1_type != boolean && (operator == OR || operator == AND))) 
+  {
+    create_and_add_error(err_container, operation_token->line_num, depth, invalidArithmeticOperation, assignStmt, operation_token, operand1_token, operand2_token);
+    *is_error = true;
+  }
+  else if (operator == DIV && !((operand1_type == integer && operand2_type == integer) || 
+                               (operand1_type == real && operand2_type == real)))
+  {
+    create_and_add_error(err_container, operation_token->line_num, depth, invalidDivisionOperation, assignStmt, operation_token, operand1_token, operand2_token);
+    *is_error = true;
+  }
+  if(*is_error) printf("    Not compatible!\n");
+  else printf("    Compatible!\n");
+  return;
+}
+
+primitive_id_type get_operand_type(parse_tree_node *node, hash_map *type_exp_table, error_container *err_container, int depth, bool *is_error) 
+{
+  if (((node->children)[0])->t == NUM) {
+    // operand NUM
+
+    // char *error_strin = "operand NUM";
+    // printf("%s\n", error_strin);
+    // if (((node->children)[0])->token) printf("\n\n        Token Node: %s\n\n", ((node->children)[0])->token->lexeme);
+    return integer;
+  }
+  
+  else if (((node->children)[0])->t == ID) {
+    // operand ID
+
+    parse_tree_node *id_node = (node->children)[0];
+    type_exp_table_entry *identifier = (type_exp_table_entry *)find_in_map(type_exp_table, id_node->token->lexeme);
+    // char *error_strin = "   operand ID";
+    // printf("%s\n", error_strin);
+    // if (id_node->token) printf("\n\n      Token Node: %s\n\n", id_node->token->lexeme);
+    
+    if (identifier == NULL || identifier->type != primitive)
+    {
+      create_and_add_error(err_container, id_node->token->line_num, depth+1, identifier == NULL ? declarationInvalid : arrSizeMismatch, assignStmt, NULL, id_node->token, NULL);
+      *is_error = true;
+      return 0;
+    }
+    // printf("    Done id\n");
+    return identifier->prim_entry->type;
+  }
+
+  else if (((node->children)[0])->nt == arrayElement)
+  {
+    // operand arrayElement
+
+    // char *error_strin = "   operand arrayElement";
+    // printf("%s\n", error_strin);
+    // if (((node->children)[0])->token) printf("\n    Token Node: %s\n", ((node->children)[0])->token->lexeme);
+    *is_error = !(is_arr_element_valid((node->children)[0], type_exp_table, err_container, depth+1));
+    // printf("    Done array \n");
+    if (*is_error)
+    {
+      return 0;
+    } 
+    return integer;
+  }
+  else 
+  {
+    assert(false, "[check_term] invalid operand node");
+  }
+  return 0;
+
+}
+primitive_id_type check_term(parse_tree_node *node, hash_map *type_exp_table, error_container *err_container, int depth, bool *is_error)
+{
+  if (node->nt != term)
+  {
+    assert(false, "[check_term] invalid term node");
+  }
+  if (node->num_children == 1) {
+    // term operand
+
+    // printf("  check term 1 child\n");
+    primitive_id_type operand_type = get_operand_type((node->children)[0], type_exp_table, err_container, depth + 1, is_error);
+    if (*is_error) 
+    {
+      return 0;
+    }
+    return operand_type;
+  }  
+  else 
+  {
+    // term operand (operator) term
+
+    primitive_id_type operand2_type;
+    // printf("  check_term recur op1\n");
+    primitive_id_type operand1_type = get_operand_type((node->children)[0], type_exp_table, err_container, depth + 1, is_error);
+    // printf("  Back from get op\n");
+    if (*is_error) 
+    {
+      // printf("  Error!\n");
+      return 0;
+    }
+    else
+    {
+      // printf("  check_term recur op2\n");
+      operand2_type = check_term((node->children)[2], type_exp_table, err_container, depth + 1, is_error);
+
+      if (*is_error) 
+      {
+        return 0;
+      }
+    }
+
+    //check compatibility of operand and term
+    terminal operator = ((node->children)[1])->t;
+    // printf(" compat start term\n");
+    check_expression_compatibility(node, operand1_type, operand2_type, operator, err_container, is_error, depth);
+    // printf(" compat done\n");
+    if (*is_error) 
+    {
+      // printf("  Error Exists\n");
+      return 0;
+    }
+    else 
+    {
+      // printf("  Returning from check term after compat %d\n", operand1_type);
+      return operator == DIV ? real : operand1_type;
+    }
+
+  }
+
+}
+
+primitive_id_type get_assignment_rhs_type(parse_tree_node *node, hash_map *type_exp_table, error_container *err_container, int depth, bool *is_error)
+{
+  if (node->nt != arithExpression)
+  {
+    assert(false, "[get_assignment_rhs_type] invalid assignment node");
+  }
+  if (node->num_children == 1)
+  {
+    // arithExpression term
+
+    // printf("get_assignment_rhs_type recur 1 CHILD \n");
+    primitive_id_type operand_type = check_term((node->children)[0], type_exp_table, err_container, depth + 1, is_error);
+    if (*is_error)
+    {
+      return 0;
+    }
+    // printf("Returning from rhs 1 child %d\n", operand_type);
+    return operand_type;
+  }
+  else
+  {
+    // arithExpression term (operator) arithExpression
+    
+    primitive_id_type operand1_type,  operand2_type; 
+    // printf("\nget_assignment_rhs_type recur op1\n");
+    operand1_type = check_term((node->children)[0], type_exp_table, err_container, depth + 1, is_error);
+    if (*is_error)
+    {
+      return 0;
+    }
+    else
+    {
+      // printf("get_assignment_rhs_type recur op2\n");
+      operand2_type = get_assignment_rhs_type((node->children)[2], type_exp_table, err_container, depth + 1, is_error);
+      if (*is_error)
+      {
+        return 0;
+      }
+    }
+
+    terminal operator = ((node->children)[1])->t;
+    // outermost compatibility check for RHS
+    // printf("compat start rhs\n");
+    check_expression_compatibility(node, operand1_type, operand2_type, operator, err_container, is_error, depth);
+    // printf("compat done\n");
+    if (*is_error) 
+    {
+      return 0;
+    }
+    else 
+    {
+      return operator == DIV ? real : operand1_type;
+    }
+  }
+}
+
 void set_assignment_errors(parse_tree_node *node, hash_map *type_exp_table, error_container *err_container, int depth)
 {
   if (node->nt != assignStmt)
     assert(false, "[set_assignment_errors] invalid node passed");
 
   bool is_error = false;
-  primitive_id_type lhs_type = get_assignment_lhs_type((node->children)[0], type_exp_table, err_container, depth + 1, &is_error);
+  // printf("[get_assignment_rhs_type] Going into rhs\n");
+  primitive_id_type rhs_type = get_assignment_rhs_type((node->children)[2], type_exp_table, err_container, depth + 1, &is_error);
 
   if (is_error)
     return;
+  
+  is_error = false;
+  primitive_id_type lhs_type = get_assignment_lhs_type((node->children)[0], type_exp_table, err_container, depth + 1, &is_error);
+  if (is_error)
+    return;
+
+  if (lhs_type != rhs_type) {
+    // last three arguments check1
+    create_and_add_error(err_container, get_nt_line_num((node->children)[1]), depth, typeMismatch, assignStmt, ((node->children)[1])->token, NULL, NULL);
+    printf("Type Mismatch\n");
+  }
+  else {
+    printf("Type Match\n");
+  }
+  
 }

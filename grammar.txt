@@ -43,14 +43,11 @@ operand arrayElement
 assignLhs ID
 assignLhs arrayElement
 assignStmt assignLhs EQUALS arithExpression SEMICOL
-assignStmt ID EQUALS boolExpression SEMICOL
 arithExpression term PLUS arithExpression
 arithExpression term MINUS arithExpression
+arithExpression term OR arithExpression
 arithExpression term
 term operand MUL term
 term operand DIV term
+term operand AND term
 term operand
-boolExpression andExpression OR boolExpression
-boolExpression andExpression
-andExpression ID AND andExpression
-andExpression ID
