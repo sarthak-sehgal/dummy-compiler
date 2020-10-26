@@ -25,4 +25,6 @@ void create_parse_tree(parse_tree_node **pt, grammar *G, token_stream *ts);
 
 void set_declaration_types(parse_tree_node *root, hash_map *type_exp_table, error_container *err_container, int depth);
 
+void traverse_parse_tree(parse_tree_node *tree_root, hash_map *type_exp_table, error_container *err_container);
+
 #endif
