@@ -17,7 +17,9 @@ void create_parse_tree(parse_tree_node **pt, grammar *G, token_stream *ts)
   start_symbol->is_terminal = false;
   start_symbol->nt = module;
   push_to_stack(stack, start_symbol);
+  printf("\nCreating PT\n");
   bool is_pt_valid = parse_tree_helper(stack, ts->head, G, pt);
+  printf("\nCreated PT\n");
   if (!is_pt_valid)
     assert(false, "source code is invalid!");
 }

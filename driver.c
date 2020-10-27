@@ -22,7 +22,7 @@
 #include "./driver.h"
 
 char grammar_file[150] = "./grammar.txt";
-char source_code_file[150] = "./source_code.txt";
+char source_code_file[150] = "./t6.txt";
 bool grammar_read = false, tokenised = false, pt_created = false, type_table_created = false, error_container_created = false;
 grammar *G = NULL;
 token_stream *ts = NULL;

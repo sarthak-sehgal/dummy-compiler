@@ -16,6 +16,7 @@
 */
 void tokenise_source_code(char *file_name, token_stream *ts)
 {
+  printf("\nTokenising source\n");
   FILE *fptr = fopen(file_name, "r");
   assert(fptr != NULL, "source code file opened successfully");
 
@@ -41,6 +42,7 @@ void tokenise_source_code(char *file_name, token_stream *ts)
         word[anchor] = '\0';
         if (anchor > 0)
         {
+          printf("Tokenising word %s\n", word);
           token_node *token = init_token_node(line_num, word, 0);
           char c = word[0];
           int *keyword = find_in_map(tok_map, word);
@@ -132,4 +134,5 @@ void tokenise_source_code(char *file_name, token_stream *ts)
 
   free(word);
   free(buffer);
+  printf("\nTokenising source complete\n");
 }
