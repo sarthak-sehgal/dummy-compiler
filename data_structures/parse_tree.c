@@ -13,6 +13,7 @@ parse_tree_node *init_pt_node()
   node->is_terminal = false;
   node->nt = 0;
   node->token = NULL;
+  node->type_exp = NULL;
   return node;
 }
 
