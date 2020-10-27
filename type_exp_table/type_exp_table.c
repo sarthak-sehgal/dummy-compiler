@@ -636,8 +636,8 @@ void check_expression_compatibility(parse_tree_node *node,
     create_and_add_error(err_container, operation_token->line_num, depth, invalidArithmeticOperation, assignStmt, operation_token, operand1_token, operand2_token);
     *is_error = true;
   }
-  if(*is_error) printf("    Not compatible!\n");
-  else printf("    Compatible!\n");
+  // if(*is_error) printf("    Not compatible!\n");
+  // else printf("    Compatible!\n");
   return;
 }
 
@@ -830,10 +830,10 @@ void set_assignment_errors(parse_tree_node *node, hash_map *type_exp_table, erro
   if (lhs_type != rhs_type) {
     // last three arguments check1
     create_and_add_error(err_container, get_nt_line_num((node->children)[1]), depth, typeMismatch, assignStmt, ((node->children)[1])->token, NULL, NULL);
-    printf("Type Mismatch\n");
+    // printf("Type Mismatch\n");
   }
   else {
-    printf("Type Match\n");
+    // printf("Type Match\n");
   }
   
 }
