@@ -72,6 +72,7 @@ void get_error_string(error_type err_type, char *buffer)
     break;
   case invalidDivisionOperation:
     strcpy(buffer, "Invalid operands for division");
+    break;
   case idNotArray:
     strcpy(buffer, "Identifier not array");
     break;
