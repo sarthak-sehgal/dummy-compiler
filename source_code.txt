@@ -38,6 +38,14 @@ program ( ) {
 
   abcd = ghd2_1 + ssd_2_3 ; new = d * e2 + w - 76875 ; v1 = a1 - a2 * d ;
   b1 = b2 &&& b3 ||| b1 ;
+  
+  c1 = c1 / a1 ;
+  c1 = a1 / c1 ;
+
+  b1 = b2 + b3 ;
+  c1 = c1 ||| c2 ;
+
+
   low = 1 ;
   high = 5 ;
   c1 = u [ 3 4 5 3 ] / v [ 3 4 5 4 ] ;
@@ -48,7 +56,6 @@ program ( ) {
   c1 = c2 ||| a1 ;
   c1 = c2 + a1 / a2 ;
 
-  
   h1 = s2 + s3 * u - h2 * h3 ;
   u [ 2 5 ] = v [ 3 4 ] + v1 ;
   u [ 3 7 ] = v [ 3 5 ] - new ;
