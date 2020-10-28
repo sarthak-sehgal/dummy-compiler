@@ -151,7 +151,7 @@ bool parse_tree_helper(pda_stack *stack, token_node *ts_pointer, grammar *G, par
     {
       curr_node->num_children = rule_len;
       curr_node->g_rule_idx = i;
-      delete_stack(new_stack);
+      // delete_stack(new_stack);
       return true;
     }
 
