@@ -852,7 +852,7 @@ primitive_id_type check_term(parse_tree_node *node, hash_map *type_exp_table, er
       expression = concat_strings((node->children)[0]->type_exp->prim_entry->lexeme, expression);
       expression = concat_strings(expression, ((node->children)[1])->token->lexeme);
       expression = concat_strings(expression, blank);
-      expression = concat_strings(expression, (node->children)[2]->type_exp->prim_entry->lexeme);
+      // expression = concat_strings(expression, (node->children)[2]->type_exp->prim_entry->lexeme);
       // printf("Set expression end \n");
       // printf("set non term IN\n");
       // printf("----------------------------Expression-------------------%s\n", expression);
@@ -954,10 +954,5 @@ void set_assignment_errors(parse_tree_node *node, hash_map *type_exp_table, erro
   if (lhs_type != rhs_type) {
     create_and_add_error(err_container, get_nt_line_num((node->children)[1]), depth, typeMismatch, assignStmt, ((node->children)[1])->token, NULL, NULL, NULL, NULL);
   }
-
-  else 
-  {
-    terminal operator = EQUALS;
-    //TODO : LHS = RHS expression
-  }
+  return;
 }
