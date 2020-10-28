@@ -39,6 +39,8 @@ typedef struct error_elem
   token_node *operation_token;
   token_node *operand1_token;
   token_node *operand2_token;
+  char *operand1_lexeme;
+  char *operand2_lexeme;
   int parse_tree_depth;
   error_type err_type;
 } error_elem;

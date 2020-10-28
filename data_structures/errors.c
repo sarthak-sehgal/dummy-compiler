@@ -100,6 +100,8 @@ error_elem *init_error()
   error->operand2_token = NULL;
   error->operation_token = NULL;
   error->parse_tree_depth = -1;
+  error->operand1_lexeme = NULL;
+  error->operand1_lexeme = NULL;
   error->statement_type = decStmt;
   return error;
 }

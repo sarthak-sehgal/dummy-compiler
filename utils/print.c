@@ -362,9 +362,17 @@ void print_errors(error_container *err_container)
         printf(", Op2: (%s, %s)", error->operand2_token->lexeme, op2_id);
         free(op2_id);
       }
+      if (error->operand1_lexeme)
+      {
+        printf(", Operand 1 : %s", error->operand1_lexeme);
+      }
       if (error->operation_token)
       {
         printf(", Operator: %s", error->operation_token->lexeme);
+      }
+      if (error->operand2_lexeme)
+      {
+        printf(", Operand 2 : %s", error->operand2_lexeme);
       }
       printf(".\n");
     }
