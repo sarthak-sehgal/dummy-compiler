@@ -6,6 +6,10 @@
 
 #include "print.h"
 
+void print_primitive_type_exp(primitive_id_entry *data);
+void print_array_type_exp(array_id_entry *data);
+void print_jag_arr_type_exp(jagged_arr_id_entry *data);
+
 void print_rule(gm_prod_rule *rule)
 {
   char *buffer = calloc(50, sizeof(char));
@@ -125,8 +129,20 @@ void print_tree_node(parse_tree_node *node, int depth, bool print_symbol)
   }
   else
   {
-    // TO DO: PRINT TYPE EXPRESSION!
-    printf("NT, dep %d, gr_idx %d)", depth, node->g_rule_idx);
+    printf("NT, dep %d, gr_idx %d", depth, node->g_rule_idx);
+    if (node->type_exp != NULL)
+    {
+      printf(", ");
+      if (node->type_exp->type == primitive)
+        print_primitive_type_exp(node->type_exp->prim_entry);
+      else if (node->type_exp->type == array)
+        print_array_type_exp(node->type_exp->arr_entry);
+      else if (node->type_exp->type == jag_array)
+        print_jag_arr_type_exp(node->type_exp->jag_arr_entry);
+      else
+        assert(false, "[print_tree_node] uknown type node->type_exp->type");
+    }
+    printf(")");
   }
 }
 
@@ -224,7 +240,7 @@ void print_array_type_exp(array_id_entry *data)
 
 void print_jag_arr_type_exp(jagged_arr_id_entry *data)
 {
-  printf("<type=jaggedArray, dimensions=%d, range_R1=(%d,%d), range_R2=( ", data->num_dimensions, data->range_start, data->range_end);
+  printf("<type=jaggedArray, dimensions=%d, range_R1=(%d, %d), range_R2=(", data->num_dimensions, data->range_start, data->range_end);
 
   for (int i = 0; i < data->num_rows; i++)
   {
@@ -235,19 +251,19 @@ void print_jag_arr_type_exp(jagged_arr_id_entry *data)
     }
     else
     {
-      printf("%d [ ", sz[0]);
+      printf("%d [", sz[0]);
       for (int j = 0; j < sz[0]; j++)
       {
         printf("%d", sz[j + 1]);
         if (j < sz[0] - 1)
           printf(", ");
       }
-      printf(" ]");
+      printf("]");
     }
     if (i < data->num_rows - 1)
       printf(", ");
   }
-  printf(" ), basicElementType=integer>");
+  printf("), basicElementType=integer>");
 }
 
 void print_primitive_type(primitive_id_entry *data)

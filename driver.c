@@ -103,6 +103,7 @@ int main(int argc, char **argv)
       break;
     case 3: // print parse tree
       initialise();
+      init_type_table();
       print_parse_tree(pt_root);
       break;
     case 4: // print type expression table
