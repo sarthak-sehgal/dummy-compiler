@@ -712,7 +712,6 @@ primitive_id_type get_operand_type(parse_tree_node *node, hash_map *type_exp_tab
       *is_error = true;
       return 0;
     }
-    // printf("    Done id\n");
     set_nonterminal_type_exp(node, identifier->prim_entry->type, id_node->token->lexeme);
     return identifier->prim_entry->type;
   }
@@ -723,7 +722,6 @@ primitive_id_type get_operand_type(parse_tree_node *node, hash_map *type_exp_tab
 
     parse_tree_node *array_element_node = (node->children)[0];
     *is_error = !(is_arr_element_valid(array_element_node, type_exp_table, err_container, depth+1));
-    // printf("    Done array \n");
     if (*is_error)
     {
       return 0;
@@ -869,7 +867,6 @@ void set_assignment_errors(parse_tree_node *node, hash_map *type_exp_table, erro
     return;
 
   if (lhs_type != rhs_type) {
-    // last three arguments check1
     create_and_add_error(err_container, get_nt_line_num((node->children)[1]), depth, typeMismatch, assignStmt, ((node->children)[1])->token, NULL, NULL);
   }
 }
