@@ -34,4 +34,6 @@ void print_type_exp_table(hash_map *type_exp_table);
 
 void print_errors(error_container *err_container);
 
+void print_invalid_vars(invalid_vars_struct *invalid_vars);
+
 #endif

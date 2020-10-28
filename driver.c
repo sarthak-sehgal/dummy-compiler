@@ -110,6 +110,7 @@ int main(int argc, char **argv)
       initialise();
       init_type_table();
       print_type_exp_table(type_table);
+      print_invalid_vars(err_container->invalid_vars);
       break;
     default:
       printf("Please select a valid option.\n\n");
