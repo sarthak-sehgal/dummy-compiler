@@ -683,7 +683,6 @@ char* convert_array_to_string(parse_tree_node *node)
     else 
     {
       res = concat_strings(res, convert_array_to_string((node->children)[i]));
-      res = concat_strings(res, blank);
       printf("Inside convert array : %s\n", res);
     }
   }
