@@ -724,71 +724,51 @@ char *convert_array_to_string(parse_tree_node *node)
 void set_nonterminal_type_exp(parse_tree_node *node, primitive_id_type type, char *lexeme)
 {
   // create primitive entry
-  // printf("\nPrim entry create start!\n");
   primitive_id_entry *prim_entry = (primitive_id_entry *)calloc(1, sizeof(primitive_id_entry));
   prim_entry->lexeme = lexeme;
   prim_entry->type = type;
-  // printf("\nPrim entry created!\n");
 
   type_exp_table_entry *type_exp_entry = init_table_entry();
   type_exp_entry->type = primitive;
   type_exp_entry->prim_entry = prim_entry;
-  // printf("\nTable entry created!\n");
 
   node->type_exp = type_exp_entry;
-  // printf("\nNode type_exp set!!\n");
-
-  return;
 }
 
 primitive_id_type get_operand_type(parse_tree_node *node, hash_map *type_exp_table, error_container *err_container, int depth, bool *is_error)
 {
-  if (((node->children)[0])->t == NUM)
+  if (node->nt != operand)
+    assert(false, "[get_operand_type] invalid node.");
+
+  parse_tree_node *child = (node->children)[0];
+
+  if (child->t == NUM) // operand -> NUM
   {
-    // operand NUM
-    // printf("set non term IN\n");
-    // printf("Token : NUM");
-    set_nonterminal_type_exp(node, integer, ((node->children)[0])->token->lexeme);
-    // printf("set non term OUT\n");
+    set_nonterminal_type_exp(node, integer, child->token->lexeme);
     return integer;
   }
-
-  else if (((node->children)[0])->t == ID)
+  else if (child->t == ID) // operand -> ID
   {
-    // operand ID
-
-    parse_tree_node *id_node = (node->children)[0];
-    type_exp_table_entry *identifier = (type_exp_table_entry *)find_in_map(type_exp_table, id_node->token->lexeme);
+    type_exp_table_entry *identifier = (type_exp_table_entry *)find_in_map(type_exp_table, child->token->lexeme);
     if (identifier == NULL || identifier->type != primitive)
     {
-      create_and_add_error(err_container, id_node->token->line_num, depth + 1, identifier == NULL ? declarationInvalid : arrSizeMismatch, assignStmt, NULL, id_node->token, NULL, NULL, NULL);
+      create_and_add_error(err_container, child->token->line_num, depth + 1, identifier == NULL ? declarationInvalid : arrSizeMismatch, assignStmt, NULL, child->token, NULL, NULL, NULL);
       *is_error = true;
       return 0;
     }
-    // printf("Token : %s", id_node->token->lexeme);
-    // printf("set non term IN\n");
-    set_nonterminal_type_exp(node, identifier->prim_entry->type, id_node->token->lexeme);
-    // printf("set non term OUT\n");
+    set_nonterminal_type_exp(node, identifier->prim_entry->type, child->token->lexeme);
     return identifier->prim_entry->type;
   }
-
-  else if (((node->children)[0])->nt == arrayElement)
+  else if (child->nt == arrayElement) // operand -> arrayElement
   {
-    // operand arrayElement
-
-    parse_tree_node *array_element_node = (node->children)[0];
-    // printf("Array element\n");
-    *is_error = !(is_arr_element_valid(array_element_node, type_exp_table, err_container, depth + 1));
+    *is_error = !(is_arr_element_valid(child, type_exp_table, err_container, depth + 1));
     if (*is_error)
     {
       return 0;
     }
-    // printf("convert array to string IN\n");
-    char *array_element_lexeme = convert_array_to_string(array_element_node);
-    // printf("convert array to string OUT\n");
-    // printf("set non term IN\n");
+
+    char *array_element_lexeme = convert_array_to_string(child);
     set_nonterminal_type_exp(node, integer, array_element_lexeme);
-    // printf("set non term OUT\n");
     return integer;
   }
   else
@@ -803,12 +783,9 @@ primitive_id_type check_term(parse_tree_node *node, hash_map *type_exp_table, er
   {
     assert(false, "[check_term] invalid term node");
   }
-  if (node->num_children == 1)
+  if (node->num_children == 1) // term -> operand
   {
-    // term operand
-    // printf("get operand IN\n");
     primitive_id_type operand_type = get_operand_type((node->children)[0], type_exp_table, err_container, depth + 1, is_error);
-    // printf("get operand OUT\n");
 
     if (*is_error)
     {
@@ -875,20 +852,15 @@ primitive_id_type get_assignment_rhs_type(parse_tree_node *node, hash_map *type_
   {
     assert(false, "[get_assignment_rhs_type] invalid assignment node");
   }
-  if (node->num_children == 1)
+  if (node->num_children == 1) // arithExpression -> term
   {
-    // arithExpression term
-    // printf("check term IN\n");
     primitive_id_type operand_type = check_term((node->children)[0], type_exp_table, err_container, depth + 1, is_error);
-    // printf("check term OUT\n");
 
     if (*is_error)
     {
       return 0;
     }
-    // printf("set non term IN\n");
     set_nonterminal_type_exp(node, operand_type, (node->children)[0]->type_exp->prim_entry->lexeme);
-    // printf("set non term OUT\n");
     return operand_type;
   }
   else
