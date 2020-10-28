@@ -649,7 +649,7 @@ char* concat_strings(char *string1, char *string2)
   if (string1 == NULL) return string2;
   if (string2 == NULL) return string1;
 
-  int new_size = strlen(string1) + strlen(buffer) + 1;
+  int new_size = strlen(string1) + strlen(string2) + 1;
   char *res = (char *)calloc(new_size, sizeof(char));
   strcpy(res, string1);
   strcpy(res, string2);
@@ -679,7 +679,7 @@ char* convert_array_to_string(parse_tree_node *node)
 
 void set_nonterminal_type_exp(parse_tree_node *node, primitive_id_type type, char *lexeme) {
   // create primitive entry
-  primitive_id_entry prim_entry = (primitive_id_entry *)calloc(1, sizeof(primitive_id_entry));
+  primitive_id_entry *prim_entry = (primitive_id_entry *)calloc(1, sizeof(primitive_id_entry));
   prim_entry->lexeme = lexeme;
   prim_entry->type = type;
 
@@ -697,7 +697,7 @@ primitive_id_type get_operand_type(parse_tree_node *node, hash_map *type_exp_tab
   if (((node->children)[0])->t == NUM) {
     // operand NUM
 
-    set_nonterminal_type_exp(node, integer, ((node->children)[0])->token->lexeme));
+    set_nonterminal_type_exp(node, integer, ((node->children)[0])->token->lexeme);
     return integer;
   }
   
@@ -746,7 +746,7 @@ primitive_id_type check_term(parse_tree_node *node, hash_map *type_exp_table, er
   if (node->num_children == 1) {
     // term operand
     primitive_id_type operand_type = get_operand_type((node->children)[0], type_exp_table, err_container, depth + 1, is_error);
-    set_nonterminal_type_exp(node, operand_type, ((node->children)[0])->type_exp->lexeme);
+    set_nonterminal_type_exp(node, operand_type, ((node->children)[0])->type_exp->prim_entry->lexeme);
 
     if (*is_error) 
     {
@@ -784,8 +784,8 @@ primitive_id_type check_term(parse_tree_node *node, hash_map *type_exp_table, er
     {
       char *expression = (char *)calloc(10, sizeof(char));
       get_t_name(operator, expression);
-      expression = concat((node->children)[0]->type_exp->lexeme, expression);
-      expression = concat(expression, (node->children)[2]->type_exp->lexeme);
+      expression = concat_strings((node->children)[0]->type_exp->prim_entry->lexeme, expression);
+      expression = concat_strings(expression, (node->children)[2]->type_exp->prim_entry->lexeme);
       set_nonterminal_type_exp(node, operator == DIV ? real : operand1_type, expression);
       return operator == DIV ? real : operand1_type;
     }
@@ -804,7 +804,7 @@ primitive_id_type get_assignment_rhs_type(parse_tree_node *node, hash_map *type_
   {
     // arithExpression term
     primitive_id_type operand_type = check_term((node->children)[0], type_exp_table, err_container, depth + 1, is_error);
-    set_nonterminal_type_exp(node, operand_type, (node->children)[0]->type_exp->lexeme);
+    set_nonterminal_type_exp(node, operand_type, (node->children)[0]->type_exp->prim_entry->lexeme);
     if (*is_error)
     {
       return 0;
@@ -840,8 +840,8 @@ primitive_id_type get_assignment_rhs_type(parse_tree_node *node, hash_map *type_
     {
       char *expression = (char *)calloc(10, sizeof(char));
       get_t_name(operator, expression);
-      expression = concat_strings((node->children)[0]->type_exp->lexeme, expression);
-      expression = concat_strings(expression, (node->children)[2]->type_exp->lexeme);
+      expression = concat_strings((node->children)[0]->type_exp->prim_entry->lexeme, expression);
+      expression = concat_strings(expression, (node->children)[2]->type_exp->prim_entry->lexeme);
       set_nonterminal_type_exp(node, operator == DIV ? real : operand1_type, expression);
       return operator == DIV ? real : operand1_type;
     }
