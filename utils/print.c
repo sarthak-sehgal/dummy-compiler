@@ -120,6 +120,7 @@ void print_tree_node(parse_tree_node *node, int depth, bool print_symbol)
   if (print_symbol)
   {
     printf("%s", buffer);
+    free(buffer);
     return;
   }
   printf("(tok %s, ", buffer);
@@ -144,6 +145,7 @@ void print_tree_node(parse_tree_node *node, int depth, bool print_symbol)
     }
     printf(")");
   }
+  free(buffer);
 }
 
 void print_pt_helper(parse_tree_node *node, int depth, bool print_symbol)
@@ -210,6 +212,7 @@ void print_pda_stack(pda_stack *st)
     temp = temp->prev;
   }
   printf("\n");
+  free(buffer);
 }
 
 void print_primitive_type_exp(primitive_id_entry *data)

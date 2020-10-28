@@ -852,7 +852,7 @@ primitive_id_type check_term(parse_tree_node *node, hash_map *type_exp_table, er
       expression = concat_strings((node->children)[0]->type_exp->prim_entry->lexeme, expression);
       expression = concat_strings(expression, ((node->children)[1])->token->lexeme);
       expression = concat_strings(expression, blank);
-      // expression = concat_strings(expression, (node->children)[2]->type_exp->prim_entry->lexeme);
+      expression = concat_strings(expression, (node->children)[2]->type_exp->prim_entry->lexeme);
       // printf("Set expression end \n");
       // printf("set non term IN\n");
       // printf("----------------------------Expression-------------------%s\n", expression);
