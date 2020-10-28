@@ -196,9 +196,9 @@ void print_pda_stack(pda_stack *st)
   printf("\n");
 }
 
-void print_primitive_type(primitive_id_entry *data)
+void print_primitive_type_exp(primitive_id_entry *data)
 {
-  printf("\t0\t|\tnot_applicable\t|\t<type=");
+  printf("<type=");
   if (data->type == integer)
     printf("integer");
   else if (data->type == real)
@@ -207,30 +207,23 @@ void print_primitive_type(primitive_id_entry *data)
     printf("boolean");
   else
     assert(false, "[print_primitive_type] unknown primitive type");
-  printf(">\n");
+  printf(">");
 }
 
-void print_array_type(array_id_entry *data)
+void print_array_type_exp(array_id_entry *data)
 {
-  printf("\t1\t|\t");
-  if (data->is_static)
-    printf("static\t\t|");
-  else
-    printf("dynamic\t\t|");
-
-  printf("\t<type=rectangularArray, dimensions=%d, ", data->num_dimensions);
+  printf("<type=rectangularArray, dimensions=%d, ", data->num_dimensions);
   for (int i = 0; i < data->num_dimensions; i++)
   {
     char *range_beg = ((data->range_start)[i])->lexeme;
     char *range_end = ((data->range_end)[i])->lexeme;
     printf("range_R%d=(%s,%s), ", i + 1, range_beg, range_end);
   }
-  printf("basicElementType=integer>\n");
+  printf("basicElementType=integer>");
 }
 
-void print_jag_arr_type(jagged_arr_id_entry *data)
+void print_jag_arr_type_exp(jagged_arr_id_entry *data)
 {
-  printf("\t2\t|\tnot_applicable\t|\t");
   printf("<type=jaggedArray, dimensions=%d, range_R1=(%d,%d), range_R2=( ", data->num_dimensions, data->range_start, data->range_end);
 
   for (int i = 0; i < data->num_rows; i++)
@@ -254,7 +247,34 @@ void print_jag_arr_type(jagged_arr_id_entry *data)
     if (i < data->num_rows - 1)
       printf(", ");
   }
-  printf(" ), basicElementType=integer>\n");
+  printf(" ), basicElementType=integer>");
+}
+
+void print_primitive_type(primitive_id_entry *data)
+{
+  printf("\tprim\t|\tnot_applicable\t|\t");
+  print_primitive_type_exp(data);
+  printf("\n");
+}
+
+void print_array_type(array_id_entry *data)
+{
+  printf("\tarr\t|\t");
+  if (data->is_static)
+    printf("static\t\t|");
+  else
+    printf("dynamic\t\t|");
+
+  printf("\t");
+  print_array_type_exp(data);
+  printf("\n");
+}
+
+void print_jag_arr_type(jagged_arr_id_entry *data)
+{
+  printf("\tJA\t|\tnot_applicable\t|\t");
+  print_jag_arr_type_exp(data);
+  printf("\n");
 }
 
 void print_type_exp_table(hash_map *type_exp_table)
