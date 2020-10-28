@@ -641,14 +641,63 @@ void check_expression_compatibility(parse_tree_node *node,
   return;
 }
 
+
+char* concat_strings(char *string1, char *string2) 
+{
+  
+  if (string1 == NULL && string2 == NULL) return NULL;
+  if (string1 == NULL) return string2;
+  if (string2 == NULL) return string1;
+
+  int new_size = strlen(string1) + strlen(buffer) + 1;
+  char *res = (char *)calloc(new_size, sizeof(char));
+  strcpy(res, string1);
+  strcpy(res, string2);
+  return res;
+}
+
+
+char* convert_array_to_string(parse_tree_node *node) 
+{
+  int num_children = node->num_children;
+  if (num_children == 0) return NULL; 
+  char *res = NULL;
+  for (int i = 0; i < num_children; i++) 
+  {
+    if ((node->children)[i]->is_terminal)
+    {
+      res = concat_strings(res, (node->children)[i]->token->lexeme);
+    } 
+    else 
+    {
+      res = concat_strings(res, convert_array_to_string((node->children)[i]));
+    }
+  }
+  return res;
+}
+
+
+void set_nonterminal_type_exp(parse_tree_node *node, primitive_id_type type, char *lexeme) {
+  // create primitive entry
+  primitive_id_entry prim_entry = (primitive_id_entry *)calloc(1, sizeof(primitive_id_entry));
+  prim_entry->lexeme = lexeme;
+  prim_entry->type = type;
+
+  type_exp_table_entry *type_exp_entry = init_table_entry();
+  type_exp_entry->type = primitive;
+  type_exp_entry->prim_entry = prim_entry;
+
+  node->type_exp = type_exp_entry;
+
+  return;
+}
+
 primitive_id_type get_operand_type(parse_tree_node *node, hash_map *type_exp_table, error_container *err_container, int depth, bool *is_error) 
 {
   if (((node->children)[0])->t == NUM) {
     // operand NUM
 
-    // char *error_strin = "operand NUM";
-    // printf("%s\n", error_strin);
-    // if (((node->children)[0])->token) printf("\n\n        Token Node: %s\n\n", ((node->children)[0])->token->lexeme);
+    set_nonterminal_type_exp(node, integer, ((node->children)[0])->token->lexeme));
     return integer;
   }
   
@@ -657,10 +706,6 @@ primitive_id_type get_operand_type(parse_tree_node *node, hash_map *type_exp_tab
 
     parse_tree_node *id_node = (node->children)[0];
     type_exp_table_entry *identifier = (type_exp_table_entry *)find_in_map(type_exp_table, id_node->token->lexeme);
-    // char *error_strin = "   operand ID";
-    // printf("%s\n", error_strin);
-    // if (id_node->token) printf("\n\n      Token Node: %s\n\n", id_node->token->lexeme);
-    
     if (identifier == NULL || identifier->type != primitive)
     {
       create_and_add_error(err_container, id_node->token->line_num, depth+1, identifier == NULL ? declarationInvalid : arrSizeMismatch, assignStmt, NULL, id_node->token, NULL);
@@ -668,6 +713,7 @@ primitive_id_type get_operand_type(parse_tree_node *node, hash_map *type_exp_tab
       return 0;
     }
     // printf("    Done id\n");
+    set_nonterminal_type_exp(node, identifier->prim_entry->type, id_node->token->lexeme);
     return identifier->prim_entry->type;
   }
 
@@ -675,15 +721,15 @@ primitive_id_type get_operand_type(parse_tree_node *node, hash_map *type_exp_tab
   {
     // operand arrayElement
 
-    // char *error_strin = "   operand arrayElement";
-    // printf("%s\n", error_strin);
-    // if (((node->children)[0])->token) printf("\n    Token Node: %s\n", ((node->children)[0])->token->lexeme);
-    *is_error = !(is_arr_element_valid((node->children)[0], type_exp_table, err_container, depth+1));
+    parse_tree_node *array_element_node = (node->children)[0];
+    *is_error = !(is_arr_element_valid(array_element_node, type_exp_table, err_container, depth+1));
     // printf("    Done array \n");
     if (*is_error)
     {
       return 0;
     } 
+    char* array_element_lexeme = convert_array_to_string(array_element_node);
+    set_nonterminal_type_exp(node, integer, array_element_lexeme);
     return integer;
   }
   else 
@@ -701,9 +747,9 @@ primitive_id_type check_term(parse_tree_node *node, hash_map *type_exp_table, er
   }
   if (node->num_children == 1) {
     // term operand
-
-    // printf("  check term 1 child\n");
     primitive_id_type operand_type = get_operand_type((node->children)[0], type_exp_table, err_container, depth + 1, is_error);
+    set_nonterminal_type_exp(node, operand_type, ((node->children)[0])->type_exp->lexeme);
+
     if (*is_error) 
     {
       return 0;
@@ -714,20 +760,15 @@ primitive_id_type check_term(parse_tree_node *node, hash_map *type_exp_table, er
   {
     // term operand (operator) term
 
-    primitive_id_type operand2_type;
-    // printf("  check_term recur op1\n");
-    primitive_id_type operand1_type = get_operand_type((node->children)[0], type_exp_table, err_container, depth + 1, is_error);
-    // printf("  Back from get op\n");
+    primitive_id_type operand1_type, operand2_type;
+    operand1_type = get_operand_type((node->children)[0], type_exp_table, err_container, depth + 1, is_error);
     if (*is_error) 
     {
-      // printf("  Error!\n");
       return 0;
     }
     else
     {
-      // printf("  check_term recur op2\n");
       operand2_type = check_term((node->children)[2], type_exp_table, err_container, depth + 1, is_error);
-
       if (*is_error) 
       {
         return 0;
@@ -736,17 +777,18 @@ primitive_id_type check_term(parse_tree_node *node, hash_map *type_exp_table, er
 
     //check compatibility of operand and term
     terminal operator = ((node->children)[1])->t;
-    // printf(" compat start term\n");
     check_expression_compatibility(node, operand1_type, operand2_type, operator, err_container, is_error, depth);
-    // printf(" compat done\n");
     if (*is_error) 
     {
-      // printf("  Error Exists\n");
       return 0;
     }
     else 
     {
-      // printf("  Returning from check term after compat %d\n", operand1_type);
+      char *expression = (char *)calloc(10, sizeof(char));
+      get_t_name(operator, expression);
+      expression = concat((node->children)[0]->type_exp->lexeme, expression);
+      expression = concat(expression, (node->children)[2]->type_exp->lexeme);
+      set_nonterminal_type_exp(node, operator == DIV ? real : operand1_type, expression);
       return operator == DIV ? real : operand1_type;
     }
 
@@ -763,14 +805,12 @@ primitive_id_type get_assignment_rhs_type(parse_tree_node *node, hash_map *type_
   if (node->num_children == 1)
   {
     // arithExpression term
-
-    // printf("get_assignment_rhs_type recur 1 CHILD \n");
     primitive_id_type operand_type = check_term((node->children)[0], type_exp_table, err_container, depth + 1, is_error);
+    set_nonterminal_type_exp(node, operand_type, (node->children)[0]->type_exp->lexeme);
     if (*is_error)
     {
       return 0;
     }
-    // printf("Returning from rhs 1 child %d\n", operand_type);
     return operand_type;
   }
   else
@@ -778,7 +818,6 @@ primitive_id_type get_assignment_rhs_type(parse_tree_node *node, hash_map *type_
     // arithExpression term (operator) arithExpression
 
     primitive_id_type operand1_type,  operand2_type; 
-    // printf("\nget_assignment_rhs_type recur op1\n");
     operand1_type = check_term((node->children)[0], type_exp_table, err_container, depth + 1, is_error);
     if (*is_error)
     {
@@ -786,7 +825,6 @@ primitive_id_type get_assignment_rhs_type(parse_tree_node *node, hash_map *type_
     }
     else
     {
-      // printf("get_assignment_rhs_type recur op2\n");
       operand2_type = get_assignment_rhs_type((node->children)[2], type_exp_table, err_container, depth + 1, is_error);
       if (*is_error)
       {
@@ -795,16 +833,18 @@ primitive_id_type get_assignment_rhs_type(parse_tree_node *node, hash_map *type_
     }
 
     terminal operator = ((node->children)[1])->t;
-    // outermost compatibility check for RHS
-    // printf("compat start rhs\n");
     check_expression_compatibility(node, operand1_type, operand2_type, operator, err_container, is_error, depth);
-    // printf("compat done\n");
     if (*is_error) 
     {
       return 0;
     }
     else 
     {
+      char *expression = (char *)calloc(10, sizeof(char));
+      get_t_name(operator, expression);
+      expression = concat_strings((node->children)[0]->type_exp->lexeme, expression);
+      expression = concat_strings(expression, (node->children)[2]->type_exp->lexeme);
+      set_nonterminal_type_exp(node, operator == DIV ? real : operand1_type, expression);
       return operator == DIV ? real : operand1_type;
     }
   }
@@ -815,8 +855,9 @@ void set_assignment_errors(parse_tree_node *node, hash_map *type_exp_table, erro
   if (node->nt != assignStmt)
     assert(false, "[set_assignment_errors] invalid node passed");
 
+  // assignStmt assignLhs EQUALS arithExpression SEMICOL
+
   bool is_error = false;
-  // printf("[get_assignment_rhs_type] Going into rhs\n");
   primitive_id_type rhs_type = get_assignment_rhs_type((node->children)[2], type_exp_table, err_container, depth + 1, &is_error);
 
   if (is_error)
@@ -830,10 +871,5 @@ void set_assignment_errors(parse_tree_node *node, hash_map *type_exp_table, erro
   if (lhs_type != rhs_type) {
     // last three arguments check1
     create_and_add_error(err_container, get_nt_line_num((node->children)[1]), depth, typeMismatch, assignStmt, ((node->children)[1])->token, NULL, NULL);
-    // printf("Type Mismatch\n");
   }
-  else {
-    // printf("Type Match\n");
-  }
-  
 }

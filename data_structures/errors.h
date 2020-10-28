@@ -23,9 +23,9 @@ typedef enum error_type
   jagArr3dSizeMismatch,
   arrSizeMismatch,
   typeMismatch,
-  invalidBoolOperation, //edited
-  invalidArithmeticOperation, //edited
-  invalidDivisionOperation, // added
+  invalidBoolOperation,
+  invalidArithmeticOperation,
+  invalidDivisionOperation,
   idNotArray,
   arrIndexOutOfBounds,
   invalidArrayIndexType,
