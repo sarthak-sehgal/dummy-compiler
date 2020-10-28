@@ -642,19 +642,19 @@ void check_expression_compatibility(parse_tree_node *node,
 }
 
 
-char* concat_strings(char *string1, char *string2) 
-{
+// char* concat_strings(char *string1, char *string2) 
+// {
   
-  if (string1 == NULL && string2 == NULL) return NULL;
-  if (string1 == NULL) return string2;
-  if (string2 == NULL) return string1;
+//   if (string1 == NULL && string2 == NULL) return NULL;
+//   if (string1 == NULL) return string2;
+//   if (string2 == NULL) return string1;
 
-  int new_size = strlen(string1) + strlen(string2) + 1;
-  char *res = (char *)calloc(new_size, sizeof(char));
-  strcpy(res, string1);
-  strcpy(res, string2);
-  return res;
-}
+//   int new_size = strlen(string1) + strlen(string2) + 1;
+//   char *res = (char *)calloc(new_size, sizeof(char));
+//   strcpy(res, string1);
+//   strcpy(res, string2);
+//   return res;
+// }
 
 
 char* convert_array_to_string(parse_tree_node *node) 
@@ -679,8 +679,8 @@ char* convert_array_to_string(parse_tree_node *node)
     } 
     else 
     {
-      char *string2 = convert_array_to_string((node->children)[i]);
       printf("Inside convert array : %s\n", res);
+      char *string2 = convert_array_to_string((node->children)[i]);
       if (string2!=NULL) res = strcat(res, string2);
     }
   }
