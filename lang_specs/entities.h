@@ -9,6 +9,8 @@
 #ifndef ENTITIES_H
 #define ENTITIES_H
 
+#define TERMINAL_CNT 33
+#define NONTERMINAL_CNT 28
 #define MAX_RULE_LEN 15
 
 /*
@@ -76,15 +78,14 @@ enum __NONTERMINAL__
   arrayRange,
   numOrId,
   numOrIdList,
-  // TO DO: remove jagArrElement
-  jagArrElement,
+  jagArrElement, // not used
   arrayElement,
   operand,
   assignLhs,
   arithExpression,
-  boolExpression, // remove
+  boolExpression, // not used
   term,
-  andExpression, // remove
+  andExpression, // not used
   arrayDecStmt
 };
 typedef enum __NONTERMINAL__ nonterminal;
