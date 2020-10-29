@@ -1,6 +1,0 @@
-Terminal Count: 29
-DECLARE, ID, COLON, SEMICOL, LIST, OF, VARIABLES, JAGGED, ARRAY, INTEGER, R1, SQOP, NUM, SQCL, SIZE, VALUES, CURLOP, CURLCL, EPS, REAL, BOOLEAN, ELIP, EQUALS, PLUS, MINUS, MUL, DIV, OR, AND
-
-Nonterminal Count: 27
-
-module, decStmtGrp, assignStmtGrp, decStmt, assignStmt, primitiveDecStmt, jagArrDecStmt, primitiveDataType, multipleIdList, jagArrRange, jagArrInit, jagArrDimDec, jagArrValues, numList, idList, arrayRangeList, arrayRange, numOrId, numOrIdList, jagArrElement, arrayElement, operand, assignLhs, arithExpression, boolExpression, term, andExpression

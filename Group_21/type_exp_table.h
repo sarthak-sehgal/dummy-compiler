@@ -1,0 +1,32 @@
+/*
+  GROUP NO. 21
+  Authors:
+    - Sarthak Sehgal (2017B3A70452P)
+    - Syed Ahsan Abbas (2017B3A70507P)
+*/
+
+#include <stdlib.h>
+
+#include "./entities.h"
+#include "./hash_map.h"
+#include "./parse_tree.h"
+#include "./errors.h"
+#include "./nonterminal_name.h"
+#include "./terminal_name.h"
+
+#ifndef TYPE_EXP_TABLE_H
+#define TYPE_EXP_TABLE_H
+
+hash_map *init_type_exp_table();
+
+id_type get_id_type_from_dec_stmt_node(parse_tree_node *node);
+
+void set_table_entry_for_prim_stmt(parse_tree_node *node, hash_map *type_exp_table);
+
+void set_table_entry_for_arr_stmt(parse_tree_node *node, hash_map *type_exp_table);
+
+void set_table_entry_for_jag_arr_stmt(parse_tree_node *node, hash_map *type_exp_table, error_container *err_container, int depth);
+
+void set_assignment_errors(parse_tree_node *node, hash_map *type_exp_table, error_container *err_container, int depth);
+
+#endif
