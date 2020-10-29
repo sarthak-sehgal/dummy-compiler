@@ -13,6 +13,7 @@ void print_jag_arr_type_exp(jagged_arr_id_entry *data);
 void print_rule(gm_prod_rule *rule)
 {
   char *buffer = calloc(50, sizeof(char));
+  assert(buffer != NULL, "[print_rule] not enough memory");
   get_nt_name(rule->lhs, buffer);
   printf("%s -> ", buffer);
 
@@ -34,11 +35,13 @@ void print_rule(gm_prod_rule *rule)
   }
 
   free(buffer);
+  buffer = NULL;
 }
 
 void print_grammar(grammar *G)
 {
   char *buffer = calloc(100, sizeof(char));
+  assert(buffer != NULL, "[print_grammar] not enough memory");
   get_nt_name(G->st_symbol, buffer);
   printf("\n--- GRAMMAR ---\n\n Start symbol: %s", buffer);
   printf("\n\nRules (%d):\n", G->curr_num);
@@ -50,6 +53,7 @@ void print_grammar(grammar *G)
   printf("\n---- END GRAMMAR ---\n");
 
   free(buffer);
+  buffer = NULL;
 }
 
 void print_token_stream(token_stream *ts)
@@ -64,6 +68,7 @@ void print_token_stream(token_stream *ts)
     printf("\n--- Begin Token Stream ---\n");
     token_node *node = ts->head;
     char *token_name = (char *)calloc(200, sizeof(char));
+    assert(token_name != NULL, "[print_token_stream] not enough memory");
     while (node)
     {
       get_t_name(node->token_name, token_name);
@@ -73,6 +78,7 @@ void print_token_stream(token_stream *ts)
 
     printf("\n--- End Token Stream ---\n");
     free(token_name);
+    token_name = NULL;
   }
 }
 
@@ -89,6 +95,7 @@ void fancy_print_token_stream(token_stream *ts)
     int prev_line_num = 0;
     token_node *node = ts->head;
     char *token_name = (char *)calloc(200, sizeof(char));
+    assert(token_name != NULL, "[print_token_stream] not enough memory");
     while (node)
     {
       if (node->line_num != prev_line_num)
@@ -103,12 +110,14 @@ void fancy_print_token_stream(token_stream *ts)
 
     printf("\n--- End Token Stream ---\n");
     free(token_name);
+    token_name = NULL;
   }
 }
 
 void print_tree_node(parse_tree_node *node, int depth, bool print_symbol)
 {
   char *buffer = (char *)calloc(100, sizeof(char));
+  assert(buffer != NULL, "[print_tree_node] not enough memory");
   if (node->is_terminal)
   {
     get_t_name(node->t, buffer);
@@ -121,6 +130,7 @@ void print_tree_node(parse_tree_node *node, int depth, bool print_symbol)
   {
     printf("%s", buffer);
     free(buffer);
+    buffer = NULL;
     return;
   }
   printf("(tok %s, ", buffer);
@@ -146,6 +156,7 @@ void print_tree_node(parse_tree_node *node, int depth, bool print_symbol)
     printf(")");
   }
   free(buffer);
+  buffer = NULL;
 }
 
 void print_pt_helper(parse_tree_node *node, int depth, bool print_symbol)
@@ -198,6 +209,7 @@ void print_pda_stack(pda_stack *st)
   printf("\n PDA stack: ");
   stack_elem *temp = st->top;
   char *buffer = (char *)calloc(200, sizeof(200));
+  assert(buffer != NULL, "[print_pda_stack] not enough memory");
   while (temp)
   {
     if (temp->is_terminal)
@@ -213,6 +225,7 @@ void print_pda_stack(pda_stack *st)
   }
   printf("\n");
   free(buffer);
+  buffer = NULL;
 }
 
 void print_primitive_type_exp(primitive_id_entry *data)
@@ -340,6 +353,7 @@ void print_errors(error_container *err_container)
   }
   printf("\n\n---------- BEGIN ERRORS ----------\n\n");
   char *error_msg = (char *)calloc(30, sizeof(char));
+  assert(error_msg != NULL, "[print_errors] not enough memory");
   for (int i = 0; i < err_container->curr_num; i++)
   {
     error_elem *error = (err_container->errors_arr)[i];
@@ -350,20 +364,23 @@ void print_errors(error_container *err_container)
     else
     {
       printf("assignment");
-      char *op2_id = (char *)calloc(300, sizeof(char));
       if (error->operand1_token)
       {
         char *op1_id = (char *)calloc(300, sizeof(char));
+        assert(op1_id != NULL, "[print_errors] not enough memory");
         get_t_name(error->operand1_token->token_name, op1_id);
         printf(", Op1: (%s, %s)", error->operand1_token->lexeme, op1_id);
         free(op1_id);
+        op1_id = NULL;
       }
       if (error->operand2_token)
       {
         char *op2_id = (char *)calloc(300, sizeof(char));
+        assert(op2_id != NULL, "[print_errors] not enough memory");
         get_t_name(error->operand2_token->token_name, op2_id);
         printf(", Op2: (%s, %s)", error->operand2_token->lexeme, op2_id);
         free(op2_id);
+        op2_id = NULL;
       }
       if (error->operand1_lexeme)
       {
@@ -381,5 +398,6 @@ void print_errors(error_container *err_container)
     }
   }
   free(error_msg);
+  error_msg = NULL;
   printf("\n\n---------- END ERRORS ----------\n\n");
 }
