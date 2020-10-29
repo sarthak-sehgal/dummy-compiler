@@ -937,9 +937,4 @@ void set_assignment_errors(parse_tree_node *node, hash_map *type_exp_table, erro
   {
     create_and_add_error(err_container, get_nt_line_num((node->children)[1]), depth, typeMismatch, assignStmt, ((node->children)[1])->token, convert_array_to_string((node->children)[0]), ((node->children)[2])->type_exp->prim_entry->lexeme, lhs_type, rhs_type);
   }
-  else
-  {
-    terminal operator= EQUALS;
-    //TODO : LHS = RHS expression
-  }
 }
