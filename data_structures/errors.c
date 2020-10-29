@@ -92,13 +92,13 @@ void get_error_string(error_type err_type, char *buffer)
     strcpy(buffer, "Data type mismatch");
     break;
   case invalidBoolOperation:
-    strcpy(buffer, "Invalid operator for boolean operands");
+    strcpy(buffer, "Invalid operator for bool");
     break;
   case invalidArithmeticOperation:
-    strcpy(buffer, "Invalid operator for arithmetic operands");
+    strcpy(buffer, "Invalid operator for arith");
     break;
   case invalidDivisionOperation:
-    strcpy(buffer, "Invalid operands for division");
+    strcpy(buffer, "Invalid operands for div");
     break;
   case idNotArray:
     strcpy(buffer, "Identifier not array");
@@ -110,7 +110,7 @@ void get_error_string(error_type err_type, char *buffer)
     strcpy(buffer, "Invalid array index type");
     break;
   case declarationInvalid:
-    strcpy(buffer, "Declaration of identifier invalid");
+    strcpy(buffer, "Declaration of ID invalid");
     break;
   default:
     assert(false, "[get_error_string] error type not identified!");
