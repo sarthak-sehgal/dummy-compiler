@@ -454,21 +454,27 @@ bool check_jag_arr_dimensions(parse_tree_node *node, hash_map *type_exp_table, j
       }
       else
       {
-        int *range = (arr_type_exp->sizes)[(*dim1 - arr_type_exp->range_start)];
+        int *range = *dim1 == -1 ? NULL : (arr_type_exp->sizes)[(*dim1 - arr_type_exp->range_start)];
         range_beg = 0;
-        if (*dim_count == 1)
+        if (*dim_count == 1 && range != NULL)
         {
           range_end = range[0] - 1;
           (*dim2) = num;
+          if (num < range_beg || num > range_end)
+          {
+            create_and_add_error(err_container, node->token->line_num, depth + 1, jagArrIndexOutOfBounds, assignStmt, NULL, node->token->lexeme, NULL, 0, 0);
+            return false;
+          }
         }
-        else
+        else if (*dim_count == 2 && range != NULL && *dim2 != -1)
+        {
           range_end = range[1 + (*dim2)] - 1;
-      }
-
-      if (num < range_beg || num > range_end)
-      {
-        create_and_add_error(err_container, node->token->line_num, depth + 1, jagArrIndexOutOfBounds, assignStmt, NULL, node->token->lexeme, NULL, 0, 0);
-        return false;
+          if (num < range_beg || num > range_end)
+          {
+            create_and_add_error(err_container, node->token->line_num, depth + 1, jagArrIndexOutOfBounds, assignStmt, NULL, node->token->lexeme, NULL, 0, 0);
+            return false;
+          }
+        }
       }
     }
     else if (node->t == ID)
