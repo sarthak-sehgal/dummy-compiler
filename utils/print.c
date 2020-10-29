@@ -350,6 +350,12 @@ void print_invalid_vars(invalid_vars_struct *invalid_vars)
 {
   printf("\n\n---------- INVALID VARS ----------\n\n");
   int count = invalid_vars->count;
+  if (count == 0)
+  {
+    printf("No invalid variable declaration found.");
+    printf("\n\n---------- END INVALID VARS ----------\n\n");
+    return;
+  }
   for (int i = 0; i < count; i++)
   {
     printf("%d. %s\n", i + 1, (invalid_vars->lexeme)[i]);
