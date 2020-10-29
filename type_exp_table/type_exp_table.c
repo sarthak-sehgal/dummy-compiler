@@ -6,6 +6,8 @@
 
 #include "type_exp_table.h"
 
+char *convert_array_to_string(parse_tree_node *node);
+
 hash_map *init_type_exp_table()
 {
   hash_map *table = init_map(30);
@@ -495,13 +497,13 @@ bool check_jag_arr_dimensions(parse_tree_node *node, hash_map *type_exp_table, j
   return res;
 }
 
-bool check_array_dimensions(parse_tree_node *node, hash_map *type_exp_table, array_id_entry *arr_type_exp, error_container *err_container, int depth, int *dim_count)
+bool check_array_dimensions(parse_tree_node *node, hash_map *type_exp_table, array_id_entry *arr_type_exp, error_container *err_container, int depth, int *dim_count, parse_tree_node *arr_node)
 {
   if (node->nt == numOrId)
   {
     if (*dim_count >= arr_type_exp->num_dimensions)
     {
-      create_and_add_error(err_container, get_nt_line_num(node), depth, arrSizeMismatch, assignStmt, NULL, NULL, NULL, 0, 0);
+      create_and_add_error(err_container, get_nt_line_num(node), depth, arrSizeMismatch, assignStmt, NULL, convert_array_to_string(arr_node), NULL, 0, 0);
       return false;
     }
 
@@ -538,7 +540,7 @@ bool check_array_dimensions(parse_tree_node *node, hash_map *type_exp_table, arr
   bool res = true;
   for (int i = 0; i < node->num_children; i++)
   {
-    res = res && check_array_dimensions((node->children)[i], type_exp_table, arr_type_exp, err_container, depth + 1, dim_count);
+    res = res && check_array_dimensions((node->children)[i], type_exp_table, arr_type_exp, err_container, depth + 1, dim_count, arr_node);
   }
 
   return res;
@@ -563,10 +565,10 @@ bool is_arr_element_valid(parse_tree_node *node, hash_map *type_exp_table, error
   else if (type_exp->type == array)
   {
     int dim_count = 0;
-    bool res = check_array_dimensions((node->children)[2], type_exp_table, type_exp->arr_entry, err_container, depth, &dim_count);
+    bool res = check_array_dimensions((node->children)[2], type_exp_table, type_exp->arr_entry, err_container, depth, &dim_count, node);
     if (res && dim_count < type_exp->arr_entry->num_dimensions)
     {
-      create_and_add_error(err_container, get_nt_line_num((node->children)[2]), depth, arrSizeMismatch, assignStmt, NULL, NULL, NULL, 0, 0);
+      create_and_add_error(err_container, get_nt_line_num((node->children)[2]), depth, arrSizeMismatch, assignStmt, NULL, convert_array_to_string(node), NULL, 0, 0);
       return false;
     }
     return res;
