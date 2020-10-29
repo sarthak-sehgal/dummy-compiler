@@ -279,6 +279,8 @@ void create_and_add_error(error_container *err_container,
   error->err_type = err_type;
   error->operand1_lexeme = operand1_lexeme;
   error->operand2_lexeme = operand2_lexeme;
+  error->operand1_type = operand1_type;
+  error->operand2_type = operand2_type;
   add_error(err_container, error);
 }
 
@@ -288,14 +290,14 @@ void set_jag_arr_value_sizes(parse_tree_node *node, jagged_arr_id_entry *jag_arr
   {
     if ((*values_cnt) >= max_val_count)
     {
-      create_and_add_error(err_container, get_nt_line_num(node), depth, jagArrNumListOverflow, decStmt, NULL, NULL, NULL, NULL, NULL);
+      create_and_add_error(err_container, get_nt_line_num(node), depth, jagArrNumListOverflow, decStmt, NULL, NULL, NULL, 0, 0);
       return;
     }
 
     int num_count = get_num_count(node);
     if (num_count == 0)
     {
-      create_and_add_error(err_container, get_nt_line_num(node), depth, jagArrNumListUnderflow, decStmt, NULL, NULL, NULL, NULL, NULL);
+      create_and_add_error(err_container, get_nt_line_num(node), depth, jagArrNumListUnderflow, decStmt, NULL, NULL, NULL, 0, 0);
       return;
     }
 
@@ -326,7 +328,7 @@ void set_jag_arr_sizes(parse_tree_node *node, jagged_arr_id_entry *jag_arr_entry
     int idx = string_to_num(idx_node->token->lexeme);
     if (idx < jag_arr_entry->range_start || idx > jag_arr_entry->range_end)
     {
-      create_and_add_error(err_container, idx_node->token->line_num, depth, jagArrIndexOutOfBounds, decStmt, NULL, NULL, NULL, NULL, NULL);
+      create_and_add_error(err_container, idx_node->token->line_num, depth, jagArrIndexOutOfBounds, decStmt, NULL, NULL, NULL, 0, 0);
       return;
     }
 
@@ -336,7 +338,7 @@ void set_jag_arr_sizes(parse_tree_node *node, jagged_arr_id_entry *jag_arr_entry
     int size = string_to_num(size_node->token->lexeme);
     if (size <= 0)
     {
-      create_and_add_error(err_container, idx_node->token->line_num, depth, jagArrDecSizeUnderflow, decStmt, NULL, NULL, NULL, NULL, NULL);
+      create_and_add_error(err_container, idx_node->token->line_num, depth, jagArrDecSizeUnderflow, decStmt, NULL, NULL, NULL, 0, 0);
       return;
     }
 
@@ -378,7 +380,7 @@ void set_table_entry_for_jag_arr_stmt(parse_tree_node *node, hash_map *type_exp_
   int range_end = dummy_jag_arr_entry.range_end;
   if (range_end < range_start)
   {
-    create_and_add_error(err_container, get_nt_line_num(node), depth, jagArrNegativeRange, decStmt, NULL, NULL, NULL, NULL, NULL);
+    create_and_add_error(err_container, get_nt_line_num(node), depth, jagArrNegativeRange, decStmt, NULL, NULL, NULL, 0, 0);
     for (int i = 0; i < num_id; i++)
       add_invalid_var(err_container, id_list[i]);
     return;
@@ -433,7 +435,7 @@ bool check_jag_arr_dimensions(parse_tree_node *node, hash_map *type_exp_table, j
   {
     if (*dim_count >= arr_type_exp->num_dimensions)
     {
-      create_and_add_error(err_container, get_nt_line_num(node), depth, arr_type_exp->num_dimensions == 2 ? jagArr2dSizeMismatch : jagArr3dSizeMismatch, assignStmt, NULL, NULL, NULL, NULL, NULL);
+      create_and_add_error(err_container, get_nt_line_num(node), depth, arr_type_exp->num_dimensions == 2 ? jagArr2dSizeMismatch : jagArr3dSizeMismatch, assignStmt, NULL, NULL, NULL, 0, 0);
       return false;
     }
 
@@ -463,7 +465,7 @@ bool check_jag_arr_dimensions(parse_tree_node *node, hash_map *type_exp_table, j
 
       if (num < range_beg || num > range_end)
       {
-        create_and_add_error(err_container, node->token->line_num, depth + 1, jagArrIndexOutOfBounds, assignStmt, NULL, node->token, NULL, NULL, NULL);
+        create_and_add_error(err_container, node->token->line_num, depth + 1, jagArrIndexOutOfBounds, assignStmt, NULL, node->token->lexeme, NULL, 0, 0);
         return false;
       }
     }
@@ -472,7 +474,7 @@ bool check_jag_arr_dimensions(parse_tree_node *node, hash_map *type_exp_table, j
       type_exp_table_entry *identifier = find_in_map(type_exp_table, node->token->lexeme);
       if (identifier == NULL || identifier->type != primitive || identifier->prim_entry->type != integer)
       {
-        create_and_add_error(err_container, node->token->line_num, depth + 1, identifier == NULL ? declarationInvalid : invalidArrayIndexType, assignStmt, NULL, node->token, NULL, NULL, NULL);
+        create_and_add_error(err_container, node->token->line_num, depth + 1, identifier == NULL ? declarationInvalid : invalidArrayIndexType, assignStmt, NULL, node->token->lexeme, NULL, 0, 0);
         return false;
       }
     }
@@ -499,7 +501,7 @@ bool check_array_dimensions(parse_tree_node *node, hash_map *type_exp_table, arr
   {
     if (*dim_count >= arr_type_exp->num_dimensions)
     {
-      create_and_add_error(err_container, get_nt_line_num(node), depth, arrSizeMismatch, assignStmt, NULL, NULL, NULL, NULL, NULL);
+      create_and_add_error(err_container, get_nt_line_num(node), depth, arrSizeMismatch, assignStmt, NULL, NULL, NULL, 0, 0);
       return false;
     }
 
@@ -511,7 +513,7 @@ bool check_array_dimensions(parse_tree_node *node, hash_map *type_exp_table, arr
       token_node *range_en = (arr_type_exp->range_end)[*dim_count];
       if ((range_st->token_name == NUM && num < string_to_num(range_st->lexeme)) || ((range_en->token_name == NUM && num > string_to_num(range_en->lexeme))))
       {
-        create_and_add_error(err_container, node->token->line_num, depth + 1, arrIndexOutOfBounds, assignStmt, NULL, node->token, NULL, NULL, NULL);
+        create_and_add_error(err_container, node->token->line_num, depth + 1, arrIndexOutOfBounds, assignStmt, NULL, node->token->lexeme, NULL, 0, 0);
         return false;
       }
     }
@@ -520,7 +522,7 @@ bool check_array_dimensions(parse_tree_node *node, hash_map *type_exp_table, arr
       type_exp_table_entry *identifier = find_in_map(type_exp_table, node->token->lexeme);
       if (identifier == NULL || identifier->type != primitive || identifier->prim_entry->type != integer)
       {
-        create_and_add_error(err_container, node->token->line_num, depth + 1, identifier == NULL ? declarationInvalid : invalidArrayIndexType, assignStmt, NULL, node->token, NULL, NULL, NULL);
+        create_and_add_error(err_container, node->token->line_num, depth + 1, identifier == NULL ? declarationInvalid : invalidArrayIndexType, assignStmt, NULL, node->token->lexeme, NULL, 0, 0);
         return false;
       }
     }
@@ -554,7 +556,8 @@ bool is_arr_element_valid(parse_tree_node *node, hash_map *type_exp_table, error
   type_exp_table_entry *type_exp = (type_exp_table_entry *)find_in_map(type_exp_table, identifier->token->lexeme);
   if (type_exp == NULL || type_exp->type == primitive)
   {
-    create_and_add_error(err_container, identifier->token->line_num, depth + 1, type_exp == NULL ? declarationInvalid : idNotArray, assignStmt, NULL, identifier->token, NULL, NULL, NULL);
+    primitive_id_type type = type_exp == NULL ? 0 : type_exp->prim_entry->type;
+    create_and_add_error(err_container, identifier->token->line_num, depth + 1, type_exp == NULL ? declarationInvalid : idNotArray, assignStmt, NULL, identifier->token->lexeme, NULL, type, 0);
     return false;
   }
   else if (type_exp->type == array)
@@ -563,7 +566,7 @@ bool is_arr_element_valid(parse_tree_node *node, hash_map *type_exp_table, error
     bool res = check_array_dimensions((node->children)[2], type_exp_table, type_exp->arr_entry, err_container, depth, &dim_count);
     if (res && dim_count < type_exp->arr_entry->num_dimensions)
     {
-      create_and_add_error(err_container, get_nt_line_num((node->children)[2]), depth, arrSizeMismatch, assignStmt, NULL, NULL, NULL, NULL, NULL);
+      create_and_add_error(err_container, get_nt_line_num((node->children)[2]), depth, arrSizeMismatch, assignStmt, NULL, NULL, NULL, 0, 0);
       return false;
     }
     return res;
@@ -576,7 +579,7 @@ bool is_arr_element_valid(parse_tree_node *node, hash_map *type_exp_table, error
     bool res = check_jag_arr_dimensions((node->children)[2], type_exp_table, type_exp->jag_arr_entry, err_container, depth, &dim_count, &dim1, &dim2);
     if (res && dim_count < type_exp->jag_arr_entry->num_dimensions)
     {
-      create_and_add_error(err_container, get_nt_line_num((node->children)[2]), depth, type_exp->jag_arr_entry->num_dimensions == 2 ? jagArr2dSizeMismatch : jagArr3dSizeMismatch, assignStmt, NULL, NULL, NULL, NULL, NULL);
+      create_and_add_error(err_container, get_nt_line_num((node->children)[2]), depth, type_exp->jag_arr_entry->num_dimensions == 2 ? jagArr2dSizeMismatch : jagArr3dSizeMismatch, assignStmt, NULL, NULL, NULL, 0, 0);
       return false;
     }
     return res;
@@ -597,7 +600,7 @@ primitive_id_type get_assignment_lhs_type(parse_tree_node *node, hash_map *type_
     type_exp = (type_exp_table_entry *)find_in_map(type_exp_table, node->token->lexeme);
     if (type_exp == NULL || type_exp->type != primitive)
     {
-      create_and_add_error(err_container, node->token->line_num, depth, type_exp == NULL ? declarationInvalid : arrSizeMismatch, assignStmt, NULL, node->token, NULL, NULL, NULL);
+      create_and_add_error(err_container, node->token->line_num, depth, type_exp == NULL ? declarationInvalid : arrSizeMismatch, assignStmt, NULL, node->token->lexeme, NULL, 0, 0);
       *is_error = true;
       return 0;
     }
@@ -615,7 +618,7 @@ primitive_id_type get_assignment_lhs_type(parse_tree_node *node, hash_map *type_
     type_exp = (type_exp_table_entry *)find_in_map(type_exp_table, node->token->lexeme);
     if (type_exp == NULL || type_exp->type != primitive)
     {
-      create_and_add_error(err_container, node->token->line_num, depth, type_exp == NULL ? declarationInvalid : arrSizeMismatch, assignStmt, NULL, node->token, NULL, NULL, NULL);
+      create_and_add_error(err_container, node->token->line_num, depth, type_exp == NULL ? declarationInvalid : arrSizeMismatch, assignStmt, NULL, node->token->lexeme, NULL, 0, 0);
       *is_error = true;
       return 0;
     }
@@ -649,22 +652,22 @@ void check_expression_compatibility(parse_tree_node *node,
   if (operator== DIV && !((operand1_type == integer && operand2_type == integer) ||
                           (operand1_type == real && operand2_type == real)))
   {
-    create_and_add_error(err_container, operation_token->line_num, depth, invalidDivisionOperation, assignStmt, operation_token, operand1_token, operand2_token, ((node->children)[0])->type_exp->prim_entry->lexeme, ((node->children)[2])->type_exp->prim_entry->lexeme);
+    create_and_add_error(err_container, operation_token->line_num, depth, invalidDivisionOperation, assignStmt, operation_token, ((node->children)[0])->type_exp->prim_entry->lexeme, ((node->children)[2])->type_exp->prim_entry->lexeme, operand1_type, operand2_type);
     *is_error = true;
   }
   else if (operand1_type != operand2_type)
   {
-    create_and_add_error(err_container, operation_token->line_num, depth, typeMismatch, assignStmt, operation_token, operand1_token, operand2_token, ((node->children)[0])->type_exp->prim_entry->lexeme, ((node->children)[2])->type_exp->prim_entry->lexeme);
+    create_and_add_error(err_container, operation_token->line_num, depth, typeMismatch, assignStmt, operation_token, ((node->children)[0])->type_exp->prim_entry->lexeme, ((node->children)[2])->type_exp->prim_entry->lexeme, operand1_type, operand2_type);
     *is_error = true;
   }
   else if ((operand1_type == boolean && (operator== PLUS || operator== MINUS || operator== DIV || operator== MUL)))
   {
-    create_and_add_error(err_container, operation_token->line_num, depth, invalidBoolOperation, assignStmt, operation_token, operand1_token, operand2_token, ((node->children)[0])->type_exp->prim_entry->lexeme, ((node->children)[2])->type_exp->prim_entry->lexeme);
+    create_and_add_error(err_container, operation_token->line_num, depth, invalidBoolOperation, assignStmt, operation_token, ((node->children)[0])->type_exp->prim_entry->lexeme, ((node->children)[2])->type_exp->prim_entry->lexeme, operand1_type, operand2_type);
     *is_error = true;
   }
   else if ((operand1_type != boolean && (operator== OR || operator== AND)))
   {
-    create_and_add_error(err_container, operation_token->line_num, depth, invalidArithmeticOperation, assignStmt, operation_token, operand1_token, operand2_token, ((node->children)[0])->type_exp->prim_entry->lexeme, ((node->children)[2])->type_exp->prim_entry->lexeme);
+    create_and_add_error(err_container, operation_token->line_num, depth, invalidArithmeticOperation, assignStmt, operation_token, ((node->children)[0])->type_exp->prim_entry->lexeme, ((node->children)[2])->type_exp->prim_entry->lexeme, operand1_type, operand2_type);
     *is_error = true;
   }
   // if(*is_error) printf("    Not compatible!\n");
@@ -753,7 +756,7 @@ primitive_id_type get_operand_type(parse_tree_node *node, hash_map *type_exp_tab
     type_exp_table_entry *identifier = (type_exp_table_entry *)find_in_map(type_exp_table, child->token->lexeme);
     if (identifier == NULL || identifier->type != primitive)
     {
-      create_and_add_error(err_container, child->token->line_num, depth + 1, identifier == NULL ? declarationInvalid : arrSizeMismatch, assignStmt, NULL, child->token, NULL, NULL, NULL);
+      create_and_add_error(err_container, child->token->line_num, depth + 1, identifier == NULL ? declarationInvalid : arrSizeMismatch, assignStmt, NULL, child->token->lexeme, NULL, 0, 0);
       *is_error = true;
       return 0;
     }
@@ -932,7 +935,7 @@ void set_assignment_errors(parse_tree_node *node, hash_map *type_exp_table, erro
 
   if (lhs_type != rhs_type)
   {
-    create_and_add_error(err_container, get_nt_line_num((node->children)[1]), depth, typeMismatch, assignStmt, ((node->children)[1])->token, NULL, NULL, NULL, NULL);
+    create_and_add_error(err_container, get_nt_line_num((node->children)[1]), depth, typeMismatch, assignStmt, ((node->children)[1])->token, convert_array_to_string((node->children)[0]), ((node->children)[2])->type_exp->prim_entry->lexeme, lhs_type, rhs_type);
   }
   else
   {

@@ -41,8 +41,8 @@ typedef struct error_elem
   char *operand2_lexeme;
   int parse_tree_depth;
   error_type err_type;
-  primitve_id_type operand1_type;
-  primitve_id_type opernad2_type;
+  primitive_id_type operand1_type;
+  primitive_id_type operand2_type;
 } error_elem;
 
 typedef struct invalid_vars_struct

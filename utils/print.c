@@ -357,6 +357,18 @@ void print_invalid_vars(invalid_vars_struct *invalid_vars)
   printf("\n\n---------- END INVALID VARS ----------\n\n");
 }
 
+void print_id_type(primitive_id_type type)
+{
+  if (type == integer)
+    printf("integer");
+  else if (type == real)
+    printf("real");
+  else if (type == boolean)
+    printf("boolean");
+  else
+    assert(false, "[print_id_type] unknown type");
+}
+
 void print_errors(error_container *err_container)
 {
   if (err_container->curr_num == 0)
@@ -377,27 +389,11 @@ void print_errors(error_container *err_container)
     else
     {
       printf("assignment");
-      if (error->operand1_token)
-      {
-        char *op1_id = (char *)calloc(300, sizeof(char));
-        assert(op1_id != NULL, "[print_errors] not enough memory");
-        get_t_name(error->operand1_token->token_name, op1_id);
-        printf(", Op1: (%s, %s)", error->operand1_token->lexeme, op1_id);
-        free(op1_id);
-        op1_id = NULL;
-      }
-      if (error->operand2_token)
-      {
-        char *op2_id = (char *)calloc(300, sizeof(char));
-        assert(op2_id != NULL, "[print_errors] not enough memory");
-        get_t_name(error->operand2_token->token_name, op2_id);
-        printf(", Op2: (%s, %s)", error->operand2_token->lexeme, op2_id);
-        free(op2_id);
-        op2_id = NULL;
-      }
       if (error->operand1_lexeme)
       {
-        printf(", Operand 1 : %s", error->operand1_lexeme);
+        printf(", Op1: (%s, ", error->operand1_lexeme);
+        print_id_type(error->operand1_type);
+        printf(")");
       }
       if (error->operation_token)
       {
@@ -405,7 +401,9 @@ void print_errors(error_container *err_container)
       }
       if (error->operand2_lexeme)
       {
-        printf(", Operand 2 : %s", error->operand2_lexeme);
+        printf(", Op2: (%s, ", error->operand2_lexeme);
+        print_id_type(error->operand2_type);
+        printf(")");
       }
       printf(".\n");
     }
