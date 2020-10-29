@@ -389,30 +389,37 @@ void print_errors(error_container *err_container)
   {
     error_elem *error = (err_container->errors_arr)[i];
     get_error_string(error->err_type, error_msg);
-    printf("\n%d. Line %d, Error: %s, Tree depth: %d, Statement Type: ", i + 1, error->line_num, error_msg, error->parse_tree_depth);
+    printf("\n%d. Line %d, Statement Type: ", i + 1, error->parse_tree_depth);
     if (error->statement_type == decStmt)
-      printf("declaration.\n");
+      printf("declaration");
+    else
+      printf("assignment");
+
+    if (error->operation_token)
+    {
+      printf(", Operator: %s", error->operation_token->lexeme);
+    }
+    else
+      printf(", Operator: ***");
+    if (error->operand1_lexeme)
+    {
+      printf(", Op1: (%s, ", error->operand1_lexeme);
+      print_id_type(error->operand1_type);
+      printf(")");
+    }
     else
     {
-      printf("assignment");
-      if (error->operand1_lexeme)
-      {
-        printf(", Op1: (%s, ", error->operand1_lexeme);
-        print_id_type(error->operand1_type);
-        printf(")");
-      }
-      if (error->operation_token)
-      {
-        printf(", Operator: %s", error->operation_token->lexeme);
-      }
-      if (error->operand2_lexeme)
-      {
-        printf(", Op2: (%s, ", error->operand2_lexeme);
-        print_id_type(error->operand2_type);
-        printf(")");
-      }
-      printf(".\n");
+      printf(", Op1: ***");
     }
+    if (error->operand2_lexeme)
+    {
+      printf(", Op2: (%s, ", error->operand2_lexeme);
+      print_id_type(error->operand2_type);
+      printf(")");
+    }
+    else
+      printf(", Op2: ***");
+    printf(", Tree depth: %d, Error: %s\n", error->parse_tree_depth, error_msg);
   }
   free(error_msg);
   error_msg = NULL;
