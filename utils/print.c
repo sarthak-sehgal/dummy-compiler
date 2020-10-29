@@ -344,6 +344,17 @@ void print_type_exp_table(hash_map *type_exp_table)
   printf("\n\n---------- END TYPE EXPRESSION TABLE ----------\n\n");
 }
 
+void print_invalid_vars(invalid_vars_struct *invalid_vars)
+{
+  printf("\n\n---------- INVALID VARS ----------\n\n");
+  int count = invalid_vars->count;
+  for (int i = 0; i < count; i++)
+  {
+    printf("%d. %s\n", i + 1, (invalid_vars->lexeme)[i]);
+  }
+  printf("\n\n---------- END INVALID VARS ----------\n\n");
+}
+
 void print_errors(error_container *err_container)
 {
   if (err_container->curr_num == 0)

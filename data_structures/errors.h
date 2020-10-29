@@ -45,11 +45,19 @@ typedef struct error_elem
   error_type err_type;
 } error_elem;
 
+typedef struct invalid_vars_struct
+{
+  char **lexeme;
+  int count;
+  int capacity;
+} invalid_vars_struct;
+
 typedef struct error_container
 {
   int curr_num;
   int capacity;
   error_elem **errors_arr;
+  invalid_vars_struct *invalid_vars;
 } error_container;
 
 error_container *init_error_container();
@@ -59,5 +67,7 @@ void add_error(error_container *container, error_elem *error);
 void get_error_string(error_type err_type, char *buffer);
 
 error_elem *init_error();
+
+void add_invalid_var(error_container *err_container, char *lexeme);
 
 #endif
