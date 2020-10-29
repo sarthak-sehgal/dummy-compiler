@@ -672,8 +672,6 @@ void check_expression_compatibility(parse_tree_node *node,
     create_and_add_error(err_container, operation_token->line_num, depth, invalidArithmeticOperation, assignStmt, operation_token, ((node->children)[0])->type_exp->prim_entry->lexeme, ((node->children)[2])->type_exp->prim_entry->lexeme, operand1_type, operand2_type);
     *is_error = true;
   }
-  // if(*is_error) printf("    Not compatible!\n");
-  // else printf("    Compatible!\n");
   return;
 }
 
@@ -716,12 +714,10 @@ char *convert_array_to_string(parse_tree_node *node)
         res = concat_strings(res, (node->children)[i]->token->lexeme);
         res = concat_strings(res, blank);
       }
-      // printf("Inside convert array : %s\n", res);
     }
     else
     {
       res = concat_strings(res, convert_array_to_string((node->children)[i]));
-      // printf("Inside convert array : %s\n", res);
     }
   }
   return res;
@@ -797,10 +793,7 @@ primitive_id_type check_term(parse_tree_node *node, hash_map *type_exp_table, er
     {
       return 0;
     }
-    // printf("operand type %d\n", operand_type);
-    // printf("set non term IN\n");
     set_nonterminal_type_exp(node, operand_type, ((node->children)[0])->type_exp->prim_entry->lexeme);
-    // printf("set non term OUT\n");
     return operand_type;
   }
   else
@@ -808,18 +801,14 @@ primitive_id_type check_term(parse_tree_node *node, hash_map *type_exp_table, er
     // term operand (operator) term
 
     primitive_id_type operand1_type, operand2_type;
-    // printf("get operand 1 IN\n");
     operand1_type = get_operand_type((node->children)[0], type_exp_table, err_container, depth + 1, is_error);
-    // printf("get operand 1 OUT\n");
     if (*is_error)
     {
       return 0;
     }
     else
     {
-      // printf("check term recur IN\n");
       operand2_type = check_term((node->children)[2], type_exp_table, err_container, depth + 1, is_error);
-      // printf("check term recur OUT\n");
       if (*is_error)
       {
         return 0;
@@ -835,18 +824,13 @@ primitive_id_type check_term(parse_tree_node *node, hash_map *type_exp_table, er
     }
     else
     {
-      // printf("Set expression start \n");
       char *expression = " ";
       char *blank = " ";
       expression = concat_strings((node->children)[0]->type_exp->prim_entry->lexeme, expression);
       expression = concat_strings(expression, ((node->children)[1])->token->lexeme);
       expression = concat_strings(expression, blank);
       expression = concat_strings(expression, (node->children)[2]->type_exp->prim_entry->lexeme);
-      // printf("Set expression end \n");
-      // printf("set non term IN\n");
-      // printf("----------------------------Expression-------------------%s\n", expression);
       set_nonterminal_type_exp(node, operator== DIV ? real : operand1_type, expression);
-      // printf("set non term OUT\n");
       return operator== DIV ? real : operand1_type;
     }
   }
@@ -874,18 +858,14 @@ primitive_id_type get_assignment_rhs_type(parse_tree_node *node, hash_map *type_
     // arithExpression term (operator) arithExpression
 
     primitive_id_type operand1_type, operand2_type;
-    // printf("check term 1 IN\n");
     operand1_type = check_term((node->children)[0], type_exp_table, err_container, depth + 1, is_error);
-    // printf("check term 1 OUT\n");
     if (*is_error)
     {
       return 0;
     }
     else
     {
-      // printf("get rhs IN\n");
       operand2_type = get_assignment_rhs_type((node->children)[2], type_exp_table, err_container, depth + 1, is_error);
-      // printf("get rhs OUT\n");
       if (*is_error)
       {
         return 0;
@@ -907,11 +887,7 @@ primitive_id_type get_assignment_rhs_type(parse_tree_node *node, hash_map *type_
       expression = concat_strings(expression, ((node->children)[1])->token->lexeme);
       expression = concat_strings(expression, blank);
       expression = concat_strings(expression, (node->children)[2]->type_exp->prim_entry->lexeme);
-      // printf("Set expression end \n");
-      // printf("set non term IN\n");
-      // printf("----------------------------Expression-------------------%s\n", expression);
       set_nonterminal_type_exp(node, operator== DIV ? real : operand1_type, expression);
-      // printf("set non term OUT\n");
       return operator== DIV ? real : operand1_type;
     }
   }
