@@ -31,6 +31,7 @@ void remove_node(parse_tree_node *node)
   if (node->num_children == 0)
   {
     free(node);
+    node = NULL;
     return;
   }
   for (int i = 0; i < node->num_children; i++)
@@ -38,6 +39,7 @@ void remove_node(parse_tree_node *node)
 
   node->num_children = 0;
   free(node);
+  node = NULL;
   return;
 }
 

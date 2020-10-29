@@ -249,6 +249,7 @@ void print_array_type_exp(array_id_entry *data)
   {
     char *range_beg = ((data->range_start)[i])->lexeme;
     char *range_end = ((data->range_end)[i])->lexeme;
+    assert(range_beg != NULL && range_end != NULL, "[print_array_type_exp] invalid range");
     printf("range_R%d=(%s,%s), ", i + 1, range_beg, range_end);
   }
   printf("basicElementType=integer>");
@@ -261,6 +262,7 @@ void print_jag_arr_type_exp(jagged_arr_id_entry *data)
   for (int i = 0; i < data->num_rows; i++)
   {
     int *sz = (data->sizes)[i];
+    assert(sz != NULL, "[print_jag_arr_type_exp] invalid size");
     if (data->num_dimensions == 2)
     {
       printf("%d", sz[0]);
@@ -363,7 +365,7 @@ void print_errors(error_container *err_container)
     return;
   }
   printf("\n\n---------- BEGIN ERRORS ----------\n\n");
-  char *error_msg = (char *)calloc(30, sizeof(char));
+  char *error_msg = (char *)calloc(31, sizeof(char));
   assert(error_msg != NULL, "[print_errors] not enough memory");
   for (int i = 0; i < err_container->curr_num; i++)
   {

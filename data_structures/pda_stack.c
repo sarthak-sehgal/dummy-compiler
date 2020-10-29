@@ -59,6 +59,7 @@ void pop_from_stack(pda_stack *st)
   stack_elem *top = st->top;
   st->top = st->top->prev;
   free(top);
+  top = NULL;
   st->size -= 1;
 }
 
@@ -70,6 +71,7 @@ void delete_stack(pda_stack *st)
   while (st->size > 0)
     pop_from_stack(st);
   free(st);
+  st = NULL;
 }
 
 /*

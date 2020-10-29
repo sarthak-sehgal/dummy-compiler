@@ -132,6 +132,7 @@ void set_table_entry_for_prim_stmt(parse_tree_node *node, hash_map *type_exp_tab
     insert_into_map(type_exp_table, prim_entry->lexeme, entry);
   }
   free(id_list);
+  id_list = NULL;
 }
 
 void get_arr_range_info(array_id_entry *array_entry, parse_tree_node *node)
@@ -207,6 +208,7 @@ void set_table_entry_for_arr_stmt(parse_tree_node *node, hash_map *type_exp_tabl
     insert_into_map(type_exp_table, id_list[i], entry);
   }
   free(id_list);
+  id_list = NULL;
 }
 
 void set_jag_arr_dim_and_range(parse_tree_node *node, jagged_arr_id_entry *jag_arr_entry)
@@ -424,6 +426,7 @@ void set_table_entry_for_jag_arr_stmt(parse_tree_node *node, hash_map *type_exp_
     insert_into_map(type_exp_table, id_list[i], entry);
   }
   free(id_list);
+  id_list = NULL;
 }
 
 bool check_jag_arr_dimensions(parse_tree_node *node, hash_map *type_exp_table, jagged_arr_id_entry *arr_type_exp, error_container *err_container, int depth, int *dim_count, int *dim1, int *dim2)

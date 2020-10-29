@@ -119,6 +119,7 @@ void tokenise_source_code(char *file_name, token_stream *ts)
 
           add_to_token_stream(ts, token);
           free(token);
+          token = NULL;
         }
         anchor = 0;
         if (buffer[i] == '\n' || buffer[i] == '\0')
@@ -131,5 +132,7 @@ void tokenise_source_code(char *file_name, token_stream *ts)
   }
 
   free(word);
+  word = NULL;
   free(buffer);
+  buffer = NULL;
 }

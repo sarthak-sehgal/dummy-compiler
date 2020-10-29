@@ -110,4 +110,5 @@ void read_grammar(char *file_name, grammar *G)
   }
 
   free(buffer);
+  buffer = NULL;
 }

@@ -67,6 +67,7 @@ map_node *get_all_map_nodes(hash_map *map)
 
   map_node *res = dummy->next;
   free(dummy);
+  dummy = NULL;
   return res;
 }
 
@@ -79,7 +80,7 @@ void delete_map_node_list(map_node *node)
   while (node)
   {
     temp = node->next;
-    free(temp);
+    free(node);
     node = temp;
   }
 }
@@ -192,8 +193,10 @@ void deallocate_map_node(map_node *node)
   if (node->next != NULL)
   {
     deallocate_map_node(node->next);
+    node->next = NULL;
   }
   free(node);
+  node = NULL;
 }
 
 /*
@@ -204,8 +207,10 @@ void deallocate_map_bucket(map_bucket *bucket)
   if (bucket->capacity != 0)
   {
     deallocate_map_node(bucket->head);
+    bucket->head = NULL;
   }
   free(bucket);
+  bucket = NULL;
 }
 
 /*
@@ -216,7 +221,9 @@ void delete_map(hash_map *map)
   for (int i = 0; i < map->map_size; i++)
   {
     deallocate_map_bucket(map->buckets[i]);
+    map->buckets[i] = NULL;
   }
   free(map->buckets);
   free(map);
+  map = NULL;
 }
