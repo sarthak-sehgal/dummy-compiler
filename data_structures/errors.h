@@ -37,12 +37,12 @@ typedef struct error_elem
   int line_num;
   nonterminal statement_type;
   token_node *operation_token;
-  token_node *operand1_token;
-  token_node *operand2_token;
   char *operand1_lexeme;
   char *operand2_lexeme;
   int parse_tree_depth;
   error_type err_type;
+  primitve_id_type operand1_type;
+  primitve_id_type opernad2_type;
 } error_elem;
 
 typedef struct invalid_vars_struct

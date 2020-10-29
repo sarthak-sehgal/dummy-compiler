@@ -123,12 +123,12 @@ error_elem *init_error()
   error_elem *error = calloc(1, sizeof(error_elem));
   error->line_num = -1;
   error->err_type = 0;
-  error->operand1_token = NULL;
-  error->operand2_token = NULL;
   error->operation_token = NULL;
   error->parse_tree_depth = -1;
   error->operand1_lexeme = NULL;
   error->operand1_lexeme = NULL;
   error->statement_type = decStmt;
+  error->operand1_type = 0;
+  error->operand2_type = 0;
   return error;
 }

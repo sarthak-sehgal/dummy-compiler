@@ -266,17 +266,15 @@ void create_and_add_error(error_container *err_container,
                           error_type err_type,
                           nonterminal statement_type,
                           token_node *operation_token,
-                          token_node *operand1_token,
-                          token_node *operand2_token,
                           char *operand1_lexeme,
-                          char *operand2_lexeme)
+                          char *operand2_lexeme,
+                          primitive_id_type operand1_type,
+                          primitive_id_type operand2_type)
 {
   error_elem *error = init_error();
   error->line_num = line_num;
   error->statement_type = statement_type;
-  error->operand1_token = operand1_token;
   error->operation_token = operation_token;
-  error->operand2_token = operand2_token;
   error->parse_tree_depth = parse_tree_depth;
   error->err_type = err_type;
   error->operand1_lexeme = operand1_lexeme;
