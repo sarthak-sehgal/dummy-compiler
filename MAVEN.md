@@ -1,5 +1,5 @@
 # Dummy Compiler
-This is a _not-so-efficient_ implementation for a compiler for a basic language developed as part of a university course. This document highlights key aspects of the project for my final stage interview at Maven Securities. To view the rules of the language and the complete problem statement, please refer to the [problem statement](https://github.com/sarthak-sehgal/ppl-assignment/blob/master/problem_statement.pdf).
+This is an implementation for a compiler for a basic language developed as part of a university course. The focus has been on correctness and not efficiency. This document highlights key aspects of the project for my final stage interview at Maven Securities. To view the rules of the language and the complete problem statement, please refer to the [problem statement](https://github.com/sarthak-sehgal/ppl-assignment/blob/master/problem_statement.pdf).
 
 ## Implementation language
 As mentioned in the problem description, all implementation will be required to be done in C programming language. You should use the Ubuntu (version 20.04.1 LTS) and GCC (version 9.3.0) strictly for all your implementations.
