@@ -42,7 +42,7 @@ As mentioned in the problem description, all implementation will be required to 
 ## Key Highlights
 * Collaborated with teammate remotely, worked on the same repository maintaining git discipline (atomic commits, branching, README). Wrote over 6k lines of code.
 * Achieved all expected results. Devised context free grammar for the given language and developed tokeniser, parse tree, type expression table, and semantic error checker.
-* Implemented data structures including hash table, linked list and n-ary tree from scratch.
+* Implemented data structures including hash table, dynamic array, linked list and n-ary tree from scratch.
 * Algorithmic implementation of the parse tree construction (push down automata) - applied backtracking to iterate over the token stream (a linked list) and construct the n-ary tree.
 
 ## Sample Source Code
