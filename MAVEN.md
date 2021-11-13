@@ -16,16 +16,21 @@ As mentioned in the problem description, all implementation will be required to 
 * Text level static constants are only integers (not floats or booleans)
 * Blank space delimited between entities
 * Syntax for declarations:
-  * declare v1 : integer
-  * declare list of variables : a1 a2 integer;
-  * declare list of variables u v : array [ low_1 .. high_1 ] [ low_2 .. high_2 ] of integer ;
-  *
-    ```
-    declare list of variables s1 s2 : jagged array [ 3 .. 8 ] [ ] of integer ;
-    R1 [ 3 ] : size 3 : values { 20 ; 35 ; 54 }
-    R1 [ 4 ] : size 6 : values { 65 ; 89 ; 99 ; 11 ; 37 ; 11 }
-    ...
-    ```
+  ```
+  declare v1 : integer
+  ```
+  ```
+  declare list of variables : a1 a2 integer;
+  ```
+  ```
+  declare list of variables u v : array [ low_1 .. high_1 ] [ low_2 .. high_2 ] of integer ;
+  ```
+  ```
+  declare list of variables s1 s2 : jagged array [ 3 .. 8 ] [ ] of integer ;
+  R1 [ 3 ] : size 3 : values { 20 ; 35 ; 54 }
+  R1 [ 4 ] : size 6 : values { 65 ; 89 ; 99 ; 11 ; 37 ; 11 }
+  ...
+  ```
 
 ## Expected Results
 1. Grammar for the language and parser for grammer text file
