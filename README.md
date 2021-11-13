@@ -1,5 +1,7 @@
+# Maven Securities Interview
+Please refer to [MAVEN.md](./MAVEN.md) that provides details about the project along with screenshots.
 # Dummy Compiler
-This is a _not-so-efficient_ implementation for a compiler for a very basic language developed as part of a university course. To view the rules of the language and the complete problem statement, please refer to the [problem statement](https://github.com/sarthak-sehgal/ppl-assignment/blob/master/problem_statement.pdf). The code implements:
+This is a _not-so-efficient_ implementation for a compiler for a basic language developed as part of a university course. To view the rules of the language and the complete problem statement, please refer to the [problem statement](https://github.com/sarthak-sehgal/ppl-assignment/blob/master/problem_statement.pdf). The code implements:
 1. Grammar and grammar parser
 2. Tokeniser
 3. Lexer
@@ -10,7 +12,7 @@ This is a _not-so-efficient_ implementation for a compiler for a very basic lang
 ```
 git clone https://github.com/sarthak-sehgal/dummy-compiler
 
-cd toy-compiler
+cd dummy-compiler
 
 make run && ./output t1.txt
 ```
